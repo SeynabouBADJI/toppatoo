@@ -1,0 +1,253 @@
+<div class="page">
+
+  <!-- LOADING -->
+  <div class="state-msg" *ngIf="loading">Chargement du dossier patient...</div>
+
+  <div *ngIf="!loading">
+
+    <!-- HEADER -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="btn-back" (click)="retour()">← Patients</button>
+        <div *ngIf="patient">
+          <div class="page-title">
+            Consultation — {{ patient.user.prenom }} {{ patient.user.nom }}
+          </div>
+          <div class="page-sub">
+            {{ patient.maladieChronique | titlecase }} ·
+            {{ calculerAge(patient.dateNaissance) }} ans
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERREUR -->
+    <div class="erreur" *ngIf="erreur">{{ erreur }}</div>
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step" [class.active]="etape === 1" [class.done]="etape > 1">
+        <div class="step-num">{{ etape > 1 ? '✓' : '1' }}</div>
+        <div class="step-label">Consultation</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" [class.active]="etape === 2" [class.done]="etape > 2">
+        <div class="step-num">{{ etape > 2 ? '✓' : '2' }}</div>
+        <div class="step-label">Mesures</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" [class.active]="etape === 3" [class.done]="etape > 3">
+        <div class="step-num">{{ etape > 3 ? '✓' : '3' }}</div>
+        <div class="step-label">Ordonnance</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" [class.active]="etape === 4">
+        <div class="step-num">4</div>
+        <div class="step-label">Rendez-vous</div>
+      </div>
+    </div>
+
+    <!-- ═══ ETAPE 1 : CONSULTATION ═══ -->
+    <div class="card" *ngIf="etape === 1">
+      <div class="card-title">Compte-rendu de consultation</div>
+
+      <div class="field">
+        <label class="field-label">Type de consultation</label>
+        <select class="field-input" [(ngModel)]="consultation.type">
+          <option *ngFor="let t of typesConsultation" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Compte-rendu <span class="req">*</span></label>
+        <textarea
+          class="field-input field-textarea"
+          [(ngModel)]="consultation.compteRendu"
+          placeholder="Décrivez l'état du patient, les observations cliniques..."
+          rows="5"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Objectifs du prochain mois</label>
+        <textarea
+          class="field-input field-textarea"
+          [(ngModel)]="consultation.objectifsMois"
+          placeholder="Ex: Réduire la consommation de sucre, marche 30 min/jour..."
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-submit" (click)="validerConsultation()" [disabled]="saving">
+          {{ saving ? 'Enregistrement...' : 'Valider et passer aux mesures →' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ ETAPE 2 : MESURES ═══ -->
+    <div class="card" *ngIf="etape === 2">
+      <div class="card-title">Mesures cliniques</div>
+
+      <!-- Formulaire ajout mesure -->
+      <div class="mesure-form">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Type</label>
+            <select class="field-input" [(ngModel)]="nouvelleMesure.type" (change)="onTypeMesureChange()">
+              <option *ngFor="let t of typesMesure" [value]="t.value">{{ t.label }}</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field-label">
+              {{ isTension() ? 'Systolique' : 'Valeur' }}
+            </label>
+            <input class="field-input" type="number" [(ngModel)]="nouvelleMesure.valeur"
+                   [placeholder]="nouvelleMesure.unite"/>
+          </div>
+
+          <div class="field" *ngIf="isTension()">
+            <label class="field-label">Diastolique</label>
+            <input class="field-input" type="number" [(ngModel)]="nouvelleMesure.valeur2"
+                   placeholder="mmHg"/>
+          </div>
+
+          <div class="field field-small">
+            <label class="field-label">Unité</label>
+            <input class="field-input" type="text" [(ngModel)]="nouvelleMesure.unite"/>
+          </div>
+
+          <button class="btn-ajouter" (click)="ajouterMesure()" [disabled]="saving">
+            + Ajouter
+          </button>
+        </div>
+      </div>
+
+      <!-- Liste mesures ajoutées -->
+      <div class="mesures-list" *ngIf="mesures.length > 0">
+        <div class="section-title">Mesures enregistrées ({{ mesures.length }})</div>
+        <div class="mesure-item" *ngFor="let m of mesures">
+          <div class="mesure-type">{{ m.type }}</div>
+          <div class="mesure-valeur">
+            {{ m.valeur }} {{ m.valeur2 ? '/ ' + m.valeur2 : '' }} {{ m.unite }}
+          </div>
+          <span class="badge" [ngClass]="getNiveauClass(m.niveauAlerte)">
+            {{ m.niveauAlerte ?? 'NORMAL' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="state-msg-small" *ngIf="mesures.length === 0">
+        Aucune mesure ajoutée pour le moment.
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-secondary" (click)="etape = 3">
+          Passer l'étape
+        </button>
+        <button class="btn-submit" (click)="etape = 3" [disabled]="mesures.length === 0">
+          Continuer → Ordonnance
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ ETAPE 3 : ORDONNANCE ═══ -->
+    <div class="card" *ngIf="etape === 3">
+      <div class="card-title">Ordonnance</div>
+
+      <!-- Ajouter médicament -->
+      <div class="section-title">Ajouter un médicament</div>
+      <div class="field-grid-3">
+        <div class="field">
+          <label class="field-label">Médicament</label>
+          <input class="field-input" type="text" [(ngModel)]="nouveauMedicament.nomMedicament"
+                 placeholder="Ex: Metformine"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Dosage</label>
+          <input class="field-input" type="text" [(ngModel)]="nouveauMedicament.dosage"
+                 placeholder="Ex: 850 mg"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Posologie</label>
+          <input class="field-input" type="text" [(ngModel)]="nouveauMedicament.posologie"
+                 placeholder="Ex: 2x/jour après repas"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Durée (jours)</label>
+          <input class="field-input" type="number" [(ngModel)]="nouveauMedicament.dureeJours"/>
+        </div>
+        <div class="field">
+          <label class="field-label">Heures rappel SMS</label>
+          <input class="field-input" type="text" [(ngModel)]="nouveauMedicament.heuresRappel"
+                 placeholder="08:00,20:00"/>
+        </div>
+        <div class="field field-btn">
+          <button class="btn-ajouter" (click)="ajouterMedicament()">+ Ajouter</button>
+        </div>
+      </div>
+
+      <!-- Liste médicaments -->
+      <div *ngIf="ordonnance.medicaments.length > 0">
+        <div class="section-title">Médicaments prescrits ({{ ordonnance.medicaments.length }})</div>
+        <div class="medic-item" *ngFor="let m of ordonnance.medicaments; let i = index">
+          <div class="medic-info">
+            <div class="medic-nom">{{ m.nomMedicament }}</div>
+            <div class="medic-detail">{{ m.dosage }} · {{ m.posologie }} · {{ m.dureeJours }} jours</div>
+          </div>
+          <button class="btn-suppr" (click)="supprimerMedicament(i)">✕</button>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top: 16px;">
+        <label class="field-label">Notes ordonnance</label>
+        <textarea class="field-input field-textarea" [(ngModel)]="ordonnance.notes"
+                  placeholder="Instructions générales..." rows="2"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Date d'expiration</label>
+        <input class="field-input" type="date" [(ngModel)]="ordonnance.dateExpiration"/>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-secondary" (click)="etape = 4">Passer l'étape</button>
+        <button class="btn-submit" (click)="validerOrdonnance()" [disabled]="saving">
+          {{ saving ? 'Enregistrement...' : 'Valider → Rendez-vous' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ ETAPE 4 : RENDEZ-VOUS ═══ -->
+    <div class="card" *ngIf="etape === 4">
+      <div class="card-title">Planifier le prochain rendez-vous</div>
+
+      <div class="field">
+        <label class="field-label">Date et heure</label>
+        <input class="field-input" type="datetime-local" [(ngModel)]="rdv.dateHeure"/>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Motif</label>
+        <input class="field-input" type="text" [(ngModel)]="rdv.motif"/>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Lieu</label>
+        <input class="field-input" type="text" [(ngModel)]="rdv.lieu"
+               placeholder="Ex: Clinique du Plateau, Dakar"/>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-secondary" (click)="terminer()">
+          Terminer sans RDV
+        </button>
+        <button class="btn-submit" (click)="validerRdv()" [disabled]="saving">
+          {{ saving ? 'Enregistrement...' : '✓ Terminer la consultation' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="page-title">Rendez-vous</div>
+      <div class="page-sub">{{ rdvs.length }} rendez-vous au total</div>
+    </div>
+  </div>
+
+  <div class="state-msg" *ngIf="loading">Chargement...</div>
+  <div class="state-msg error" *ngIf="erreur">{{ erreur }}</div>
+
+  <div *ngIf="!loading && !erreur">
+
+    <!-- A VENIR -->
+    <div class="section-title">
+      <i class="ti ti-calendar-event"></i>
+      A venir ({{ rdvsAvenir().length }})
+    </div>
+
+    <div class="empty" *ngIf="rdvsAvenir().length === 0">
+      Aucun rendez-vous a venir.
+    </div>
+
+    <div class="rdv-list" *ngIf="rdvsAvenir().length > 0">
+      <div class="rdv-card" *ngFor="let rdv of rdvsAvenir()"
+           (click)="ouvrirDossier(rdv.patientId)">
+
+        <div class="rdv-date-block">
+          <div class="rdv-jour">{{ formatDate(rdv.dateHeure).split(' ')[1] }}</div>
+          <div class="rdv-mois">{{ formatDate(rdv.dateHeure).split(' ')[2] }}</div>
+          <div class="rdv-heure">{{ formatHeure(rdv.dateHeure) }}</div>
+        </div>
+
+        <div class="rdv-info">
+          <div class="rdv-patient">{{ rdv.medecinNom || 'Patient' }}</div>
+          <div class="rdv-motif">{{ rdv.motif }}</div>
+          <div class="rdv-lieu" *ngIf="rdv.lieu">📍 {{ rdv.lieu }}</div>
+        </div>
+
+        <div class="rdv-right">
+          <div class="jours-badge" *ngIf="joursRestants(rdv.dateHeure) === 0">Aujourd'hui</div>
+          <div class="jours-badge" *ngIf="joursRestants(rdv.dateHeure) === 1">Demain</div>
+          <div class="jours-badge" *ngIf="joursRestants(rdv.dateHeure) > 1">
+            Dans {{ joursRestants(rdv.dateHeure) }}j
+          </div>
+          <span class="badge badge-ok">Planifie</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PASSES -->
+    <div class="section-title" style="margin-top:28px;">
+      <i class="ti ti-history"></i>
+      Passes ({{ rdvsPasses().length }})
+    </div>
+
+    <div class="empty" *ngIf="rdvsPasses().length === 0">
+      Aucun rendez-vous passe.
+    </div>
+
+    <div class="rdv-list rdv-list--muted" *ngIf="rdvsPasses().length > 0">
+      <div class="rdv-card rdv-card--passe" *ngFor="let rdv of rdvsPasses()"
+           (click)="ouvrirDossier(rdv.patientId)">
+
+        <div class="rdv-date-block">
+          <div class="rdv-jour">{{ formatDate(rdv.dateHeure).split(' ')[1] }}</div>
+          <div class="rdv-mois">{{ formatDate(rdv.dateHeure).split(' ')[2] }}</div>
+          <div class="rdv-heure">{{ formatHeure(rdv.dateHeure) }}</div>
+        </div>
+
+        <div class="rdv-info">
+          <div class="rdv-patient">{{ rdv.medecinNom || 'Patient' }}</div>
+          <div class="rdv-motif">{{ rdv.motif }}</div>
+        </div>
+
+        <div class="rdv-right">
+          <span class="badge" [ngClass]="statutClass(rdv.statut)">
+            {{ rdv.statut === 'TERMINE' ? 'Termine' : rdv.statut === 'ANNULE' ? 'Annule' : 'Passe' }}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,127 @@
+:host {
+  --vert: #1d9e75;
+  --vert-clair: #e1f5ee;
+  --vert-fonce: #0f6e56;
+  --texte: #18181b;
+  --muted: #6b7280;
+  --border: rgba(0,0,0,0.08);
+  --danger: #dc2626;
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.page { padding: 28px 32px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-title { font-size: 20px; font-weight: 600; color: var(--texte); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vert-fonce);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--vert-clair);
+}
+
+.section-title i { font-size: 16px; }
+
+.rdv-list { display: flex; flex-direction: column; gap: 10px; }
+
+.rdv-card {
+  background: #fff;
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.rdv-card:hover {
+  border-color: var(--vert);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(29,158,117,0.1);
+}
+
+.rdv-card--passe { opacity: 0.7; }
+.rdv-card--passe:hover { border-color: var(--border); transform: none; box-shadow: none; }
+
+.rdv-date-block {
+  text-align: center;
+  min-width: 48px;
+  background: var(--vert-clair);
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.rdv-jour { font-size: 22px; font-weight: 700; color: var(--vert-fonce); line-height: 1; }
+.rdv-mois { font-size: 11px; color: var(--vert-fonce); text-transform: uppercase; margin-top: 2px; }
+.rdv-heure { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.rdv-info { flex: 1; }
+.rdv-patient { font-size: 14px; font-weight: 500; color: var(--texte); }
+.rdv-motif { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.rdv-lieu { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.rdv-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.jours-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vert-fonce);
+  background: var(--vert-clair);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.badge-ok     { background: #e1f5ee; color: #085041; }
+.badge-danger { background: #fee2e2; color: #991b1b; }
+.badge-muted  { background: #f1f5f9; color: #6b7280; }
+
+.state-msg {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  background: #fff;
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+}
+.state-msg.error { color: var(--danger); }
+
+.empty {
+  background: #fff;
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 8px;
+}

@@ -1,0 +1,632 @@
+<div class="patient-dashboard" *ngIf="!loading && patient"> <!-- ===================================================== HEADER ====================================================== --> <header class="dashboard-header">
+<div class="patient-welcome">
+
+  <div class="patient-avatar">
+    {{ initiales() }}
+  </div>
+
+  <div class="patient-heading">
+    <span class="eyebrow">
+      <span class="online-dot"></span>
+      Mon espace santé
+    </span>
+
+    <h1>
+      Bonjour, {{ patient.user.prenom }} 👋
+    </h1>
+
+    <p>
+      {{ maladieLabel() }}
+      <span class="separator">•</span>
+      {{ aujourdhui() }}
+    </p>
+  </div>
+
+</div>
+
+<div class="header-actions">
+
+  <button
+    class="alert-button"
+    *ngIf="nbAlertes() > 0"
+    (click)="scrollToNotifications()"
+  >
+    <span class="alert-button-icon">
+      <i class="ti ti-alert-triangle"></i>
+    </span>
+
+    <span>
+      <strong>{{ nbAlertes() }}</strong>
+      alerte{{ nbAlertes() > 1 ? 's' : '' }}
+    </span>
+  </button>
+
+  <button
+    class="icon-button"
+    (click)="retourConnexion()"
+    title="Retour à la connexion"
+  >
+    <i class="ti ti-arrow-left"></i>
+  </button>
+
+  <button
+    class="icon-button icon-button--danger"
+    (click)="deconnexion()"
+    title="Se déconnecter"
+  >
+    <i class="ti ti-logout"></i>
+  </button>
+
+</div>
+
+</header> <!-- ===================================================== RDV ====================================================== --> <section class="appointment-section">
+<div class="appointment-card" *ngIf="prochainRdv">
+
+  <div class="appointment-icon">
+    <i class="ti ti-calendar-event"></i>
+  </div>
+
+  <div class="appointment-content">
+
+    <div class="appointment-label">
+      PROCHAIN RENDEZ-VOUS
+    </div>
+
+    <div class="appointment-doctor">
+      {{ prochainRdv.medecinNom || 'Votre médecin' }}
+    </div>
+
+    <div class="appointment-meta">
+
+      <span>
+        <i class="ti ti-clock"></i>
+        {{ formatDateRdv() }}
+      </span>
+
+      <span *ngIf="prochainRdv.lieu">
+        <i class="ti ti-map-pin"></i>
+        {{ prochainRdv.lieu }}
+      </span>
+
+    </div>
+
+  </div>
+
+  <div class="appointment-countdown">
+
+    <span *ngIf="joursAvantRdv() === 0">
+      Aujourd'hui
+    </span>
+
+    <span *ngIf="joursAvantRdv() === 1">
+      Demain
+    </span>
+
+    <span *ngIf="joursAvantRdv() > 1">
+      Dans {{ joursAvantRdv() }} jours
+    </span>
+
+  </div>
+
+</div>
+
+
+<div class="appointment-empty" *ngIf="!prochainRdv">
+
+  <div class="empty-icon">
+    <i class="ti ti-calendar-off"></i>
+  </div>
+
+  <div class="empty-content">
+    <strong>Aucun rendez-vous prévu</strong>
+    <span>Vous n'avez actuellement aucun rendez-vous planifié.</span>
+  </div>
+
+  <button class="primary-button" (click)="demanderRdv()">
+    <i class="ti ti-calendar-plus"></i>
+    Prendre rendez-vous
+  </button>
+
+</div>
+
+</section> <!-- ===================================================== MESURES ====================================================== --> <section class="dashboard-section">
+<div class="section-heading">
+
+  <div>
+    <span class="section-kicker">
+      SUIVI DE SANTÉ
+    </span>
+
+    <h2>
+      Mes dernières mesures
+    </h2>
+
+    <p *ngIf="derniereConsultation">
+      Dernière consultation :
+      {{ formatConsultDate(derniereConsultation.dateConsultation) }}
+    </p>
+  </div>
+
+</div>
+
+
+<div class="measure-empty" *ngIf="mesures.length === 0">
+
+  <i class="ti ti-chart-dots"></i>
+
+  <strong>Aucune mesure disponible</strong>
+
+  <span>
+    Les mesures de votre dernière consultation apparaîtront ici.
+  </span>
+
+</div>
+
+
+<div class="measure-grid" *ngIf="mesures.length > 0">
+
+  <!-- GLYCÉMIE -->
+  <div
+    class="measure-card"
+    *ngIf="getMesure('GLYCEMIE') as m"
+    [class.is-critical]="m.niveauAlerte === 'CRITIQUE'"
+    [class.is-warning]="m.niveauAlerte === 'ATTENTION'"
+    (click)="voirHistorique('GLYCEMIE')"
+  >
+
+    <div class="measure-header">
+
+      <div class="measure-icon measure-icon--green">
+        <i class="ti ti-droplet"></i>
+      </div>
+
+      <span
+        class="status-badge"
+        [ngClass]="getNiveauClass(m.niveauAlerte)"
+      >
+        {{ getNiveauLabel(m.niveauAlerte) }}
+      </span>
+
+    </div>
+
+    <div class="measure-value">
+      {{ m.valeur }}
+    </div>
+
+    <div class="measure-footer">
+      <span>Glycémie</span>
+      <small>{{ m.unite }}</small>
+    </div>
+
+    <div class="measure-link">
+      Voir l'historique
+      <i class="ti ti-arrow-up-right"></i>
+    </div>
+
+  </div>
+
+
+  <!-- TENSION -->
+  <div
+    class="measure-card"
+    *ngIf="getMesure('TENSION_ARTERIELLE') as m"
+    [class.is-critical]="m.niveauAlerte === 'CRITIQUE'"
+    [class.is-warning]="m.niveauAlerte === 'ATTENTION'"
+    (click)="voirHistorique('TENSION_ARTERIELLE')"
+  >
+
+    <div class="measure-header">
+
+      <div class="measure-icon measure-icon--red">
+        <i class="ti ti-heart"></i>
+      </div>
+
+      <span
+        class="status-badge"
+        [ngClass]="getNiveauClass(m.niveauAlerte)"
+      >
+        {{ getNiveauLabel(m.niveauAlerte) }}
+      </span>
+
+    </div>
+
+    <div class="measure-value">
+      {{ m.valeur }}
+      <span *ngIf="m.valeur2" class="measure-secondary">
+        /{{ m.valeur2 }}
+      </span>
+    </div>
+
+    <div class="measure-footer">
+      <span>Tension artérielle</span>
+      <small>{{ m.unite }}</small>
+    </div>
+
+    <div class="measure-link">
+      Voir l'historique
+      <i class="ti ti-arrow-up-right"></i>
+    </div>
+
+  </div>
+
+
+  <!-- POIDS -->
+  <div
+    class="measure-card"
+    *ngIf="getMesure('POIDS') as m"
+    [class.is-critical]="m.niveauAlerte === 'CRITIQUE'"
+    [class.is-warning]="m.niveauAlerte === 'ATTENTION'"
+    (click)="voirHistorique('POIDS')"
+  >
+
+    <div class="measure-header">
+
+      <div class="measure-icon measure-icon--blue">
+        <i class="ti ti-scale"></i>
+      </div>
+
+      <span
+        class="status-badge"
+        [ngClass]="getNiveauClass(m.niveauAlerte)"
+      >
+        {{ getNiveauLabel(m.niveauAlerte) }}
+      </span>
+
+    </div>
+
+    <div class="measure-value">
+      {{ m.valeur }}
+    </div>
+
+    <div class="measure-footer">
+      <span>Poids</span>
+      <small>{{ m.unite }}</small>
+    </div>
+
+    <div class="measure-link">
+      Voir l'historique
+      <i class="ti ti-arrow-up-right"></i>
+    </div>
+
+  </div>
+
+
+  <!-- FRÉQUENCE CARDIAQUE -->
+  <div
+    class="measure-card"
+    *ngIf="getMesure('FREQUENCE_CARDIAQUE') as m"
+    [class.is-critical]="m.niveauAlerte === 'CRITIQUE'"
+    [class.is-warning]="m.niveauAlerte === 'ATTENTION'"
+    (click)="voirHistorique('FREQUENCE_CARDIAQUE')"
+  >
+
+    <div class="measure-header">
+
+      <div class="measure-icon measure-icon--purple">
+        <i class="ti ti-activity"></i>
+      </div>
+
+      <span
+        class="status-badge"
+        [ngClass]="getNiveauClass(m.niveauAlerte)"
+      >
+        {{ getNiveauLabel(m.niveauAlerte) }}
+      </span>
+
+    </div>
+
+    <div class="measure-value">
+      {{ m.valeur }}
+    </div>
+
+    <div class="measure-footer">
+      <span>Fréquence cardiaque</span>
+      <small>{{ m.unite }}</small>
+    </div>
+
+    <div class="measure-link">
+      Voir l'historique
+      <i class="ti ti-arrow-up-right"></i>
+    </div>
+
+  </div>
+
+</div>
+
+</section> <!-- ===================================================== DEUX COLONNES ====================================================== --> <div class="dashboard-columns">
+<!-- ===================================================
+     TRAITEMENT
+==================================================== -->
+<section
+  class="content-card treatment-card"
+  *ngIf="derniereConsultation?.ordonnance?.medicaments?.length"
+>
+
+  <div class="card-header">
+
+    <div class="card-title-wrapper">
+
+      <div class="card-icon card-icon--green">
+        <i class="ti ti-prescription"></i>
+      </div>
+
+      <div>
+        <span class="card-kicker">PRESCRIPTION</span>
+        <h2>Mon traitement</h2>
+      </div>
+
+    </div>
+
+    <div
+      class="expiration"
+      *ngIf="derniereConsultation?.ordonnance?.dateExpiration"
+    >
+      <i class="ti ti-clock"></i>
+      Expire le
+      {{ formatDate(derniereConsultation!.ordonnance!.dateExpiration) }}
+    </div>
+
+  </div>
+
+
+  <div class="medication-list">
+
+    <div
+      class="medication-item"
+      *ngFor="
+        let med of derniereConsultation!.ordonnance!.medicaments;
+        let i = index
+      "
+      (click)="voirDetailMedicament(med)"
+    >
+
+      <div class="medication-icon">
+        <i class="ti ti-pill"></i>
+      </div>
+
+      <div class="medication-content">
+
+        <strong>
+          {{ med.nomMedicament }}
+        </strong>
+
+        <span>
+          {{ med.dosage }} · {{ med.posologie }}
+        </span>
+
+        <small *ngIf="med.dureeJours">
+          <i class="ti ti-calendar"></i>
+          {{ med.dureeJours }} jours
+        </small>
+
+      </div>
+
+      <div
+        class="medication-reminder"
+        *ngIf="med.heuresRappel"
+      >
+        <i class="ti ti-bell"></i>
+        {{ med.heuresRappel }}
+      </div>
+
+      <i class="ti ti-chevron-right medication-arrow"></i>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ===================================================
+     OBJECTIFS
+==================================================== -->
+<section
+  class="content-card objective-card"
+  *ngIf="derniereConsultation?.objectifsMois"
+>
+
+  <div class="card-header">
+
+    <div class="card-title-wrapper">
+
+      <div class="card-icon card-icon--orange">
+        <i class="ti ti-target"></i>
+      </div>
+
+      <div>
+        <span class="card-kicker">SUIVI</span>
+        <h2>Objectifs du mois</h2>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="objective-content">
+
+    <div class="objective-circle">
+      <i class="ti ti-target-arrow"></i>
+    </div>
+
+    <p>
+      {{ derniereConsultation!.objectifsMois }}
+    </p>
+
+  </div>
+
+</section>
+
+</div> <!-- ===================================================== NOTIFICATIONS ====================================================== --> <section class="notifications-section" id="notifications-section">
+<div class="section-heading section-heading--notifications">
+
+  <div>
+
+    <span class="section-kicker">
+      CENTRE DE NOTIFICATIONS
+    </span>
+
+    <h2>
+      Notifications
+
+      <span
+        class="notification-count"
+        *ngIf="notifications.length > 0"
+      >
+        {{ notifications.length }}
+      </span>
+    </h2>
+
+  </div>
+
+  <button
+    class="text-button"
+    *ngIf="notifications.length > 0"
+    (click)="marquerToutLu()"
+  >
+    <i class="ti ti-checks"></i>
+    Tout marquer comme lu
+  </button>
+
+</div>
+
+
+<div
+  class="notification-empty"
+  *ngIf="notifications.length === 0"
+>
+  <div class="empty-icon">
+    <i class="ti ti-bell-off"></i>
+  </div>
+
+  <strong>Tout est à jour</strong>
+
+  <span>
+    Vous n'avez aucune nouvelle notification.
+  </span>
+</div>
+
+
+<div
+  class="notification-list"
+  *ngIf="notifications.length > 0"
+>
+
+  <div
+    class="notification-item"
+    *ngFor="let n of notifications"
+    [class.is-read]="n.lue"
+    (click)="marquerLu(n.id)"
+  >
+
+    <div
+      class="notification-indicator"
+      [class.indicator-danger]="n.type === 'ALERTE_MESURE'"
+      [class.indicator-warning]="n.type === 'RAPPEL_MEDICAMENT'"
+      [class.indicator-info]="n.type === 'INFO'"
+    ></div>
+
+    <div class="notification-icon">
+      <i
+        class="ti"
+        [ngClass]="{
+          'ti-alert-triangle': n.type === 'ALERTE_MESURE',
+          'ti-pill': n.type === 'RAPPEL_MEDICAMENT',
+          'ti-info-circle': n.type === 'INFO'
+        }"
+      ></i>
+    </div>
+
+    <div class="notification-content">
+
+      <strong>
+        {{ n.titre }}
+      </strong>
+
+      <p>
+        {{ n.message }}
+      </p>
+
+      <div
+        class="notification-actions"
+        *ngIf="n.actions && n.actions.length > 0"
+      >
+
+        <button
+          class="notification-action"
+          *ngFor="let action of n.actions"
+          (click)="
+            $event.stopPropagation();
+            executerAction(n.id, action)
+          "
+        >
+          {{ action.label }}
+        </button>
+
+      </div>
+
+    </div>
+
+    <time>
+      {{ formatDateNotif(n.createdAt) }}
+    </time>
+
+    <button
+      class="notification-delete"
+      *ngIf="!n.lue"
+      (click)="
+        $event.stopPropagation();
+        supprimerNotification(n.id)
+      "
+      title="Supprimer"
+    >
+      <i class="ti ti-x"></i>
+    </button>
+
+  </div>
+
+</div>
+
+</section> <!-- ===================================================== FOOTER ====================================================== --> <footer class="dashboard-footer">
+<button
+  class="footer-button footer-button--secondary"
+  (click)="retourConnexion()"
+>
+  <i class="ti ti-arrow-left"></i>
+  Retour à la connexion
+</button>
+
+<button
+  class="footer-button footer-button--danger"
+  (click)="deconnexion()"
+>
+  <i class="ti ti-logout"></i>
+  Se déconnecter
+</button>
+
+</footer> </div> <!-- ===================================================== LOADING ====================================================== --> <div class="state-page" *ngIf="loading"> <div class="state-card">
+<div class="loading-spinner"></div>
+
+<strong>Chargement de votre espace santé</strong>
+
+<span>
+  Nous préparons vos informations...
+</span>
+
+</div> </div> <!-- ===================================================== ERROR ====================================================== --> <div class="state-page" *ngIf="erreur"> <div class="state-card state-card--error">
+<div class="state-icon">
+  <i class="ti ti-alert-circle"></i>
+</div>
+
+<strong>Impossible de charger votre espace</strong>
+
+<span>
+  {{ erreur }}
+</span>
+
+<button class="primary-button" (click)="rechargerPage()">
+  <i class="ti ti-refresh"></i>
+  Réessayer
+</button>
+
+</div> </div>

@@ -1,0 +1,112 @@
+<div class="page">
+  <div class="form-box">
+
+    <!-- ═══ ÉCRAN RÉSULTAT — Identifiants générés ═══ -->
+    <div *ngIf="resultat">
+      <div class="succes-icon">✅</div>
+      <div class="form-title" style="text-align:center;">Patient créé avec succès</div>
+      <div class="form-sub" style="text-align:center;">
+        Communiquez ces identifiants au patient
+      </div>
+
+      <div class="identifiants-box">
+        <div class="identifiant-row">
+          <div class="identifiant-label">Email</div>
+          <div class="identifiant-valeur">{{ resultat.email }}</div>
+        </div>
+        <div class="identifiant-row">
+          <div class="identifiant-label">Mot de passe temporaire</div>
+          <div class="identifiant-valeur identifiant-password">{{ resultat.motDePasseTemporaire }}</div>
+        </div>
+      </div>
+
+      <div class="avertissement">
+        ⚠️ Ce mot de passe ne sera plus jamais affiché. Notez-le ou copiez-le maintenant.
+      </div>
+
+      <button class="btn-copier" (click)="copierIdentifiants()">
+        📋 Copier les identifiants
+      </button>
+
+      <button class="btn-submit" (click)="terminer()">
+        Terminer →
+      </button>
+    </div>
+
+    <!-- ═══ FORMULAIRE DE CRÉATION ═══ -->
+    <div *ngIf="!resultat">
+
+      <div class="form-header">
+        <button class="btn-back" (click)="annuler()">← Retour</button>
+        <div>
+          <div class="form-title">Nouveau patient</div>
+          <div class="form-sub">Remplissez les informations du patient</div>
+        </div>
+      </div>
+
+      <div class="erreur" *ngIf="erreur">{{ erreur }}</div>
+
+      <div class="section-title">Identité</div>
+      <div class="field-grid">
+
+        <div class="field">
+          <label class="field-label">Prénom <span class="req">*</span></label>
+          <input class="field-input" type="text" [(ngModel)]="patient.prenom" placeholder="Ex: Amadou"/>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Nom <span class="req">*</span></label>
+          <input class="field-input" type="text" [(ngModel)]="patient.nom" placeholder="Ex: Diallo"/>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Email <span class="req">*</span></label>
+          <input class="field-input" type="email" [(ngModel)]="patient.email" placeholder="Ex: amadou@email.com"/>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Téléphone</label>
+          <input class="field-input" type="tel" [(ngModel)]="patient.telephone" placeholder="+221 77 000 00 00"/>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Date de naissance <span class="req">*</span></label>
+          <input class="field-input" type="date" [(ngModel)]="patient.dateNaissance"/>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Sexe <span class="req">*</span></label>
+          <select class="field-input" [(ngModel)]="patient.sexe">
+            <option value="">-- Sélectionner --</option>
+            <option value="M">Masculin</option>
+            <option value="F">Féminin</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="section-title">Informations médicales</div>
+      <div class="field">
+        <label class="field-label">Maladie chronique principale <span class="req">*</span></label>
+        <select class="field-input field-input--full" [(ngModel)]="patient.maladieChronique">
+          <option value="">-- Sélectionner --</option>
+          <option *ngFor="let m of maladies" [value]="m.value">{{ m.label }}</option>
+        </select>
+      </div>
+
+      <div class="info-mdp">
+        🔑 Un mot de passe temporaire sera généré automatiquement pour ce patient.
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-annuler" (click)="annuler()" [disabled]="loading">Annuler</button>
+        <button class="btn-submit" (click)="onSubmit()" [disabled]="loading">
+          <span *ngIf="!loading">Enregistrer le patient</span>
+          <span *ngIf="loading">Enregistrement...</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>

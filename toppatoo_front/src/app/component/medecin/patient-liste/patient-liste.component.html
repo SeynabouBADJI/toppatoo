@@ -1,0 +1,43 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="page-title">Mes patients</div>
+      <div class="page-sub">{{ patients.length }} patient(s) suivi(s)</div>
+    </div>
+    <button class="btn-accent" (click)="nouveauPatient()">+ Nouveau patient</button>
+  </div>
+
+  <div class="state-msg" *ngIf="loading">Chargement...</div>
+  <div class="state-msg error" *ngIf="erreur">{{ erreur }}</div>
+  <div class="state-msg" *ngIf="!loading && !erreur && patients.length === 0">
+    Aucun patient enregistré pour le moment.
+  </div>
+
+  <div class="patients-grid" *ngIf="!loading && patients.length > 0">
+    <div class="patient-card" *ngFor="let patient of patients"
+         (click)="ouvrirDossier(patient.id)">
+
+      <div class="patient-header">
+        <div class="avatar">{{ initiales(patient) }}</div>
+        <div>
+          <div class="patient-name">{{ patient.user?.prenom }} {{ patient.user?.nom }}</div>
+
+          <div class="patient-meta">{{ calculerAge(patient.dateNaissance) }} ans · {{ patient.sexe }}</div>
+        </div>
+      </div>
+
+      <div class="patient-body">
+        <span class="badge">{{ maladieLabels[patient.maladieChronique] }}</span>
+        <div class="patient-contact" *ngIf="patient.user.telephone">
+          📞 {{ patient.user.telephone }}
+        </div>
+      </div>
+
+      <div class="patient-footer">
+        <span class="link">Voir le dossier →</span>
+      </div>
+    </div>
+  </div>
+
+</div>

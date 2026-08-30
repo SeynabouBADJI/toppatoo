@@ -1,0 +1,2164 @@
+// ============================================================
+// TOPPATOO - ESPACE PATIENT
+// Dashboard médical
+// ============================================================
+
+// ─────────────────────────────────────────────────────────────
+// VARIABLES
+// ─────────────────────────────────────────────────────────────
+
+$primary: #059669;
+$primary-dark: #047857;
+$primary-light: #10b981;
+$primary-soft: #ecfdf5;
+$primary-lighter: #d1fae5;
+
+$danger: #dc2626;
+$danger-dark: #b91c1c;
+$danger-soft: #fef2f2;
+$danger-border: #fecaca;
+
+$warning: #d97706;
+$warning-soft: #fffbeb;
+$warning-border: #fde68a;
+
+$blue: #2563eb;
+$blue-soft: #eff6ff;
+
+$purple: #7c3aed;
+$purple-soft: #f5f3ff;
+
+$orange: #ea580c;
+$orange-soft: #fff7ed;
+
+$text: #0f172a;
+$text-secondary: #475569;
+$text-muted: #94a3b8;
+
+$gray-50: #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+
+$white: #ffffff;
+
+$radius-xl: 20px;
+$radius-lg: 16px;
+$radius-md: 12px;
+$radius-sm: 10px;
+
+$shadow-sm:
+  0 1px 2px rgba(15, 23, 42, 0.04);
+
+$shadow:
+  0 1px 3px rgba(15, 23, 42, 0.05),
+  0 4px 12px rgba(15, 23, 42, 0.04);
+
+$shadow-hover:
+  0 12px 30px rgba(15, 23, 42, 0.08);
+
+$transition: all 0.2s ease;
+
+
+// ─────────────────────────────────────────────────────────────
+// BASE
+// ─────────────────────────────────────────────────────────────
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+}
+
+.patient-dashboard {
+  width: 100%;
+  max-width: 1240px;
+
+  margin: 0 auto;
+  padding: 32px 36px 48px;
+
+  color: $text;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// HEADER
+// ─────────────────────────────────────────────────────────────
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.patient-welcome {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.patient-avatar {
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $white;
+
+  background:
+    linear-gradient(
+      135deg,
+      $primary,
+      $primary-light
+    );
+
+  border-radius: 18px;
+
+  font-size: 20px;
+  font-weight: 750;
+
+  box-shadow:
+    0 8px 20px rgba($primary, 0.18);
+}
+
+.patient-heading {
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 5px;
+
+    color: $primary;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  h1 {
+    margin: 0;
+
+    color: $text;
+
+    font-size: 25px;
+    font-weight: 750;
+
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    margin: 6px 0 0;
+
+    color: $text-muted;
+
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .separator {
+    margin: 0 6px;
+  }
+}
+
+.online-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  background: $primary;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 4px $primary-soft;
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// HEADER ACTIONS
+// ─────────────────────────────────────────────────────────────
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-button {
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0 14px;
+
+  color: $danger;
+  background: $danger-soft;
+
+  border: 1px solid $danger-border;
+  border-radius: $radius-sm;
+
+  cursor: pointer;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  transition: $transition;
+
+  &:hover {
+    color: $white;
+    background: $danger;
+    border-color: $danger;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  strong {
+    font-weight: 750;
+  }
+}
+
+.alert-button-icon {
+  width: 26px;
+  height: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba($danger, 0.08);
+
+  border-radius: 7px;
+
+  i {
+    font-size: 15px;
+  }
+}
+
+.alert-button:hover .alert-button-icon {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+.icon-button {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: $text-secondary;
+  background: $white;
+
+  border: 1px solid $gray-200;
+  border-radius: $radius-sm;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:hover {
+    color: $primary;
+    background: $primary-soft;
+    border-color: rgba($primary, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &--danger:hover {
+    color: $danger;
+    background: $danger-soft;
+    border-color: $danger-border;
+  }
+
+  i {
+    font-size: 18px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// RENDEZ-VOUS
+// ─────────────────────────────────────────────────────────────
+
+.appointment-section {
+  margin-bottom: 34px;
+}
+
+.appointment-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  min-height: 110px;
+
+  padding: 20px 22px;
+
+  background:
+    linear-gradient(
+      105deg,
+      #ffffff 0%,
+      #f0fdf4 100%
+    );
+
+  border: 1px solid #bbf7d0;
+  border-radius: $radius-lg;
+
+  box-shadow: $shadow;
+
+  overflow: hidden;
+
+  transition: $transition;
+
+  &::after {
+    content: "";
+
+    position: absolute;
+
+    top: -90px;
+    right: -60px;
+
+    width: 190px;
+    height: 190px;
+
+    background: rgba($primary, 0.05);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+  }
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.appointment-icon {
+  position: relative;
+  z-index: 1;
+
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $primary;
+  background: $white;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 13px;
+
+  i {
+    font-size: 23px;
+  }
+}
+
+.appointment-content {
+  position: relative;
+  z-index: 1;
+
+  flex: 1;
+
+  min-width: 0;
+}
+
+.appointment-label {
+  margin-bottom: 4px;
+
+  color: $primary;
+
+  font-size: 9px;
+  font-weight: 750;
+
+  letter-spacing: 0.12em;
+}
+
+.appointment-doctor {
+  overflow: hidden;
+
+  color: $text;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.appointment-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-top: 6px;
+
+  color: $text-secondary;
+
+  font-size: 12px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  i {
+    color: $primary;
+    font-size: 14px;
+  }
+}
+
+.appointment-countdown {
+  position: relative;
+  z-index: 1;
+
+  flex-shrink: 0;
+
+  padding: 8px 13px;
+
+  color: $primary-dark;
+  background: rgba($primary, 0.09);
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// RDV VIDE
+// ─────────────────────────────────────────────────────────────
+
+.appointment-empty {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 18px 20px;
+
+  background: $white;
+
+  border: 1px dashed $gray-300;
+  border-radius: $radius-lg;
+
+  box-shadow: $shadow-sm;
+}
+
+.empty-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $text-muted;
+  background: $gray-50;
+
+  border-radius: 12px;
+
+  i {
+    font-size: 21px;
+  }
+}
+
+.empty-content {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  strong {
+    color: $text;
+
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  span {
+    color: $text-muted;
+
+    font-size: 11px;
+  }
+}
+
+.primary-button {
+  min-height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 15px;
+
+  color: $white;
+  background: $primary;
+
+  border: none;
+  border-radius: 9px;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:hover {
+    background: $primary-dark;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+      0 6px 14px rgba($primary, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  i {
+    font-size: 16px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// SECTION TITLES
+// ─────────────────────────────────────────────────────────────
+
+.dashboard-section {
+  margin-bottom: 34px;
+}
+
+.section-heading {
+  margin-bottom: 15px;
+
+  .section-kicker {
+    color: $primary;
+
+    font-size: 9px;
+    font-weight: 750;
+
+    letter-spacing: 0.12em;
+  }
+
+  h2 {
+    margin: 4px 0 0;
+
+    color: $text;
+
+    font-size: 19px;
+    font-weight: 750;
+
+    line-height: 1.25;
+    letter-spacing: -0.25px;
+  }
+
+  p {
+    margin: 5px 0 0;
+
+    color: $text-muted;
+
+    font-size: 11px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// MESURES
+// ─────────────────────────────────────────────────────────────
+
+.measure-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.measure-card {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 18px;
+
+  background: $white;
+
+  border: 1px solid $gray-200;
+  border-radius: $radius-lg;
+
+  box-shadow: $shadow;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition: $transition;
+
+  &:hover {
+    border-color: $gray-300;
+
+    box-shadow: $shadow-hover;
+
+    transform: translateY(-3px);
+
+    .measure-link {
+      color: $primary;
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+
+  &.is-critical {
+    border-color: $danger-border;
+
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #fff7f7
+      );
+  }
+
+  &.is-warning {
+    border-color: $warning-border;
+
+    background:
+      linear-gradient(
+        145deg,
+        #ffffff,
+        #fffcf2
+      );
+  }
+}
+
+.measure-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-bottom: 20px;
+}
+
+.measure-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  i {
+    font-size: 19px;
+  }
+
+  &--green {
+    color: $primary;
+    background: $primary-soft;
+  }
+
+  &--red {
+    color: $danger;
+    background: $danger-soft;
+  }
+
+  &--blue {
+    color: $blue;
+    background: $blue-soft;
+  }
+
+  &--purple {
+    color: $purple;
+    background: $purple-soft;
+  }
+}
+
+.status-badge {
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+  font-weight: 750;
+
+  line-height: 1;
+
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.measure-value {
+  min-height: 42px;
+
+  color: $text;
+
+  font-size: 30px;
+  font-weight: 750;
+
+  line-height: 1;
+
+  letter-spacing: -1px;
+}
+
+.measure-secondary {
+  color: $text-secondary;
+
+  font-size: 21px;
+  font-weight: 500;
+
+  letter-spacing: -0.5px;
+}
+
+.measure-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding-top: 13px;
+  margin-top: 14px;
+
+  border-top: 1px solid $gray-100;
+
+  span {
+    overflow: hidden;
+
+    color: $text-secondary;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    flex-shrink: 0;
+
+    color: $text-muted;
+
+    font-size: 10px;
+  }
+}
+
+.measure-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 3px;
+
+  margin-top: 10px;
+
+  color: $text-muted;
+
+  font-size: 9px;
+
+  opacity: 0.7;
+
+  transition: $transition;
+
+  i {
+    font-size: 13px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// EMPTY MESURES
+// ─────────────────────────────────────────────────────────────
+
+.measure-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 45px 20px;
+
+  text-align: center;
+
+  background: $white;
+
+  border: 1px dashed $gray-300;
+  border-radius: $radius-lg;
+
+  color: $text-muted;
+
+  i {
+    margin-bottom: 10px;
+
+    color: $gray-300;
+
+    font-size: 30px;
+  }
+
+  strong {
+    color: $text-secondary;
+
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  span {
+    margin-top: 4px;
+
+    font-size: 11px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// DEUX COLONNES
+// ─────────────────────────────────────────────────────────────
+
+.dashboard-columns {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.6fr)
+    minmax(280px, 1fr);
+
+  gap: 18px;
+
+  margin-bottom: 34px;
+}
+
+.content-card {
+  min-width: 0;
+
+  background: $white;
+
+  border: 1px solid $gray-200;
+  border-radius: $radius-lg;
+
+  box-shadow: $shadow;
+
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid $gray-100;
+}
+
+.card-title-wrapper {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+}
+
+.card-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  i {
+    font-size: 18px;
+  }
+
+  &--green {
+    color: $primary;
+    background: $primary-soft;
+  }
+
+  &--orange {
+    color: $orange;
+    background: $orange-soft;
+  }
+}
+
+.card-kicker {
+  color: $text-muted;
+
+  font-size: 8px;
+  font-weight: 750;
+
+  letter-spacing: 0.12em;
+}
+
+.card-header h2 {
+  margin: 3px 0 0;
+
+  color: $text;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.expiration {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: $text-muted;
+
+  font-size: 10px;
+
+  white-space: nowrap;
+
+  i {
+    color: $warning;
+    font-size: 13px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// TRAITEMENT
+// ─────────────────────────────────────────────────────────────
+
+.medication-list {
+  padding: 4px 0;
+}
+
+.medication-item {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 14px 20px;
+
+  border-bottom: 1px solid $gray-100;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $primary-soft;
+
+    .medication-arrow {
+      color: $primary;
+
+      transform: translateX(3px);
+    }
+  }
+
+  &:active {
+    background: darken($primary-soft, 2%);
+  }
+}
+
+.medication-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $primary;
+  background: $primary-soft;
+
+  border-radius: 9px;
+
+  i {
+    font-size: 18px;
+  }
+}
+
+.medication-content {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  strong {
+    overflow: hidden;
+
+    color: $text;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    overflow: hidden;
+
+    margin-top: 2px;
+
+    color: $text-secondary;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    margin-top: 4px;
+
+    color: $text-muted;
+
+    font-size: 10px;
+
+    i {
+      font-size: 12px;
+    }
+  }
+}
+
+.medication-reminder {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  flex-shrink: 0;
+
+  padding: 5px 8px;
+
+  color: $text-secondary;
+  background: $gray-50;
+
+  border-radius: 7px;
+
+  font-size: 10px;
+
+  white-space: nowrap;
+
+  i {
+    color: $primary;
+    font-size: 12px;
+  }
+}
+
+.medication-arrow {
+  flex-shrink: 0;
+
+  color: $text-muted;
+
+  font-size: 16px;
+
+  transition: $transition;
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// OBJECTIFS
+// ─────────────────────────────────────────────────────────────
+
+.objective-content {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+
+  padding: 22px 20px;
+}
+
+.objective-circle {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $orange;
+  background: $orange-soft;
+
+  border-radius: 50%;
+
+  i {
+    font-size: 20px;
+  }
+}
+
+.objective-content p {
+  margin: 1px 0 0;
+
+  color: $text-secondary;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// NOTIFICATIONS
+// ─────────────────────────────────────────────────────────────
+
+.notifications-section {
+  margin-bottom: 30px;
+}
+
+.section-heading--notifications {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.notification-count {
+  min-width: 20px;
+  height: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: 4px;
+
+  padding: 0 6px;
+
+  color: $white;
+  background: $primary;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  vertical-align: middle;
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 0;
+
+  color: $primary;
+  background: transparent;
+
+  border: none;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:hover {
+    color: $primary-dark;
+  }
+
+  i {
+    font-size: 15px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// NOTIFICATION EMPTY
+// ─────────────────────────────────────────────────────────────
+
+.notification-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 45px 20px;
+
+  text-align: center;
+
+  background: $white;
+
+  border: 1px dashed $gray-300;
+  border-radius: $radius-lg;
+
+  color: $text-muted;
+
+  .empty-icon {
+    margin-bottom: 10px;
+
+    background: $gray-50;
+
+    i {
+      font-size: 21px;
+    }
+  }
+
+  strong {
+    color: $text-secondary;
+
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  span {
+    margin-top: 4px;
+
+    font-size: 11px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// NOTIFICATION LIST
+// ─────────────────────────────────────────────────────────────
+
+.notification-list {
+  background: $white;
+
+  border: 1px solid $gray-200;
+  border-radius: $radius-lg;
+
+  box-shadow: $shadow;
+
+  overflow: hidden;
+}
+
+.notification-item {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 16px 18px;
+
+  border-bottom: 1px solid $gray-100;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $gray-50;
+  }
+
+  &.is-read {
+    opacity: 0.55;
+  }
+}
+
+.notification-indicator {
+  width: 7px;
+  height: 7px;
+
+  margin-top: 8px;
+
+  flex-shrink: 0;
+
+  background: $primary;
+
+  border-radius: 50%;
+
+  &.indicator-danger {
+    background: $danger;
+
+    box-shadow:
+      0 0 0 4px $danger-soft;
+  }
+
+  &.indicator-warning {
+    background: $warning;
+
+    box-shadow:
+      0 0 0 4px $warning-soft;
+  }
+
+  &.indicator-info {
+    background: $blue;
+
+    box-shadow:
+      0 0 0 4px $blue-soft;
+  }
+}
+
+.notification-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $text-secondary;
+  background: $gray-50;
+
+  border-radius: 9px;
+
+  i {
+    font-size: 16px;
+  }
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+
+  strong {
+    display: block;
+
+    color: $text;
+
+    font-size: 12px;
+    font-weight: 650;
+  }
+
+  p {
+    margin: 3px 0 0;
+
+    color: $text-secondary;
+
+    font-size: 11px;
+    line-height: 1.5;
+  }
+}
+
+.notification-item > time {
+  flex-shrink: 0;
+
+  color: $text-muted;
+
+  font-size: 9px;
+
+  white-space: nowrap;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  margin-top: 8px;
+}
+
+.notification-action {
+  padding: 5px 9px;
+
+  color: $primary;
+  background: $primary-soft;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:hover {
+    color: $white;
+    background: $primary;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.notification-delete {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: $text-muted;
+  background: transparent;
+
+  border: none;
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:hover {
+    color: $danger;
+    background: $danger-soft;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  i {
+    font-size: 15px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// FOOTER
+// ─────────────────────────────────────────────────────────────
+
+.dashboard-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding-top: 24px;
+
+  border-top: 1px solid $gray-200;
+}
+
+.footer-button {
+  min-height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 15px;
+
+  border-radius: 9px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: $transition;
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  i {
+    font-size: 15px;
+  }
+
+  &--secondary {
+    color: $text-secondary;
+    background: $white;
+
+    border: 1px solid $gray-200;
+
+    &:hover {
+      color: $text;
+      background: $gray-50;
+      border-color: $gray-300;
+    }
+  }
+
+  &--danger {
+    color: $danger;
+    background: $danger-soft;
+
+    border: 1px solid $danger-border;
+
+    &:hover {
+      color: $white;
+      background: $danger;
+      border-color: $danger;
+    }
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// LOADING / ERROR
+// ─────────────────────────────────────────────────────────────
+
+.state-page {
+  width: 100%;
+  min-height: 70vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+}
+
+.state-card {
+  width: 100%;
+  max-width: 380px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 35px;
+
+  text-align: center;
+
+  background: $white;
+
+  border: 1px solid $gray-200;
+  border-radius: $radius-lg;
+
+  box-shadow: $shadow;
+
+  strong {
+    color: $text;
+
+    font-size: 14px;
+    font-weight: 650;
+  }
+
+  span {
+    color: $text-muted;
+
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .primary-button {
+    margin-top: 10px;
+  }
+}
+
+.loading-spinner {
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 10px;
+
+  border: 3px solid $primary-lighter;
+  border-top-color: $primary;
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+.state-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  color: $danger;
+  background: $danger-soft;
+
+  border-radius: 14px;
+
+  i {
+    font-size: 26px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// RESPONSIVE - TABLET
+// ─────────────────────────────────────────────────────────────
+
+@media (max-width: 1100px) {
+
+  .patient-dashboard {
+    padding: 28px 24px 40px;
+  }
+
+  .measure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// RESPONSIVE - MOBILE
+// ─────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+
+  .patient-dashboard {
+    padding: 20px 16px 35px;
+  }
+
+  // Header
+
+  .dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+
+    margin-bottom: 22px;
+  }
+
+  .patient-welcome {
+    width: 100%;
+  }
+
+  .patient-avatar {
+    width: 54px;
+    height: 54px;
+
+    border-radius: 15px;
+
+    font-size: 17px;
+  }
+
+  .patient-heading {
+
+    h1 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 11px;
+    }
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .alert-button {
+    flex: 1;
+
+    justify-content: center;
+  }
+
+
+  // RDV
+
+  .appointment-card {
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+
+    gap: 14px;
+
+    padding: 17px;
+  }
+
+  .appointment-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .appointment-content {
+    min-width: calc(100% - 60px);
+  }
+
+  .appointment-countdown {
+    margin-left: 58px;
+  }
+
+  .appointment-empty {
+    align-items: flex-start;
+
+    flex-wrap: wrap;
+  }
+
+  .empty-content {
+    min-width: calc(100% - 62px);
+  }
+
+  .appointment-empty .primary-button {
+    width: 100%;
+  }
+
+
+  // Sections
+
+  .section-heading {
+
+    h2 {
+      font-size: 17px;
+    }
+  }
+
+
+  // Mesures
+
+  .measure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .measure-card {
+    padding: 14px;
+  }
+
+  .measure-header {
+    margin-bottom: 16px;
+  }
+
+  .measure-icon {
+    width: 36px;
+    height: 36px;
+
+    i {
+      font-size: 17px;
+    }
+  }
+
+  .measure-value {
+    font-size: 25px;
+  }
+
+  .measure-secondary {
+    font-size: 18px;
+  }
+
+  .measure-link {
+    display: none;
+  }
+
+
+  // Colonnes
+
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+  }
+
+
+  // Cards
+
+  .card-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    padding: 16px;
+  }
+
+  .expiration {
+    white-space: normal;
+  }
+
+
+  // Médicaments
+
+  .medication-item {
+    padding: 13px 15px;
+  }
+
+  .medication-reminder {
+    display: none;
+  }
+
+
+  // Notifications
+
+  .section-heading--notifications {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 9px;
+  }
+
+  .notification-item {
+    flex-wrap: wrap;
+  }
+
+  .notification-item > time {
+    width: 100%;
+
+    margin-left: 55px;
+  }
+
+
+  // Footer
+
+  .dashboard-footer {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .footer-button {
+    width: 100%;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// RESPONSIVE - PETITS TÉLÉPHONES
+// ─────────────────────────────────────────────────────────────
+
+@media (max-width: 520px) {
+
+  .patient-dashboard {
+    padding: 16px 12px 30px;
+  }
+
+  .patient-welcome {
+    gap: 12px;
+  }
+
+  .patient-avatar {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 13px;
+
+    font-size: 15px;
+  }
+
+  .patient-heading {
+
+    .eyebrow {
+      font-size: 8px;
+    }
+
+    h1 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 10px;
+    }
+  }
+
+
+  // Header buttons
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .alert-button {
+    height: 38px;
+
+    padding: 0 10px;
+
+    font-size: 10px;
+  }
+
+
+  // Appointment
+
+  .appointment-card {
+    padding: 14px;
+  }
+
+  .appointment-doctor {
+    font-size: 14px;
+  }
+
+  .appointment-meta {
+    gap: 8px;
+
+    font-size: 10px;
+  }
+
+  .appointment-countdown {
+    margin-left: 0;
+  }
+
+
+  // Measures
+
+  .measure-grid {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 8px;
+  }
+
+  .measure-card {
+    padding: 12px;
+  }
+
+  .measure-header {
+    margin-bottom: 13px;
+  }
+
+  .measure-icon {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 9px;
+
+    i {
+      font-size: 15px;
+    }
+  }
+
+  .status-badge {
+    padding: 3px 5px;
+
+    font-size: 7px;
+  }
+
+  .measure-value {
+    min-height: 32px;
+
+    font-size: 21px;
+  }
+
+  .measure-secondary {
+    font-size: 15px;
+  }
+
+  .measure-footer {
+    display: block;
+
+    padding-top: 9px;
+    margin-top: 10px;
+
+    span,
+    small {
+      display: block;
+    }
+
+    small {
+      margin-top: 3px;
+    }
+  }
+
+
+  // Medication
+
+  .medication-item {
+    gap: 9px;
+
+    padding: 12px;
+  }
+
+  .medication-icon {
+    width: 34px;
+    height: 34px;
+
+    i {
+      font-size: 16px;
+    }
+  }
+
+  .medication-content {
+
+    strong {
+      font-size: 12px;
+    }
+
+    span {
+      font-size: 10px;
+    }
+
+    small {
+      font-size: 9px;
+    }
+  }
+
+  .medication-arrow {
+    display: none;
+  }
+
+
+  // Objective
+
+  .objective-content {
+    gap: 10px;
+
+    padding: 18px 16px;
+  }
+
+  .objective-circle {
+    width: 36px;
+    height: 36px;
+
+    i {
+      font-size: 17px;
+    }
+  }
+
+  .objective-content p {
+    font-size: 11px;
+  }
+
+
+  // Notifications
+
+  .notification-item {
+    padding: 13px;
+  }
+
+  .notification-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .notification-content {
+
+    strong {
+      font-size: 11px;
+    }
+
+    p {
+      font-size: 10px;
+    }
+  }
+
+  .notification-item > time {
+    margin-left: 50px;
+
+    font-size: 8px;
+  }
+
+
+  // Footer
+
+  .dashboard-footer {
+    padding-top: 20px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// ACCESSIBILITÉ
+// ─────────────────────────────────────────────────────────────
+
+button:focus-visible,
+.measure-card:focus-visible,
+.medication-item:focus-visible,
+.notification-item:focus-visible {
+  outline: 3px solid rgba($primary, 0.25);
+  outline-offset: 2px;
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// REDUCED MOTION
+// ─────────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

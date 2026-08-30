@@ -1,0 +1,110 @@
+:host {
+  --vert: #1d9e75;
+  --vert-clair: #e1f5ee;
+  --vert-fonce: #0f6e56;
+  --texte: #18181b;
+  --muted: #6b7280;
+  --border: rgba(0,0,0,0.08);
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.page { padding: 28px 32px; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-title { font-size: 20px; font-weight: 600; color: var(--texte); }
+.page-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.btn-accent {
+  background: var(--vert);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s;
+}
+.btn-accent:hover { background: var(--vert-fonce); }
+
+.state-msg {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  background: #fff;
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+}
+.state-msg.error { color: #dc2626; }
+
+.patients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.patient-card {
+  background: #fff;
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.patient-card:hover {
+  border-color: var(--vert);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(29,158,117,0.1);
+}
+
+.patient-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--vert-clair);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--vert-fonce);
+  flex-shrink: 0;
+}
+
+.patient-name { font-size: 14px; font-weight: 500; color: var(--texte); }
+.patient-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.patient-body { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(37,99,235,0.1);
+  color: #1e40af;
+  width: fit-content;
+}
+
+.patient-contact { font-size: 12px; color: var(--muted); }
+
+.patient-footer { border-top: 0.5px solid var(--border); padding-top: 10px; }
+.link { font-size: 12px; color: var(--vert); font-weight: 500; }

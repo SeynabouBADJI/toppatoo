@@ -1,0 +1,127 @@
+<div class="page">
+
+  <div class="state-msg" *ngIf="loading">Chargement du dossier...</div>
+  <div class="erreur" *ngIf="erreur">{{ erreur }}</div>
+
+  <div *ngIf="!loading && patient">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="btn-back" (click)="retour()">← Patients</button>
+      <div class="patient-header">
+        <div class="avatar">{{ initiales() }}</div>
+        <div>
+          <div class="patient-nom">{{ patient.user?.prenom }} {{ patient.user?.nom }}</div>
+          <div class="patient-meta">
+            {{ maladieLabels[patient.maladieChronique] }} ·
+            {{ calculerAge(patient.dateNaissance) }} ans ·
+            {{ patient.sexe === 'M' ? 'Homme' : 'Femme' }}
+          </div>
+        </div>
+      </div>
+      <button class="btn-nouvelle" (click)="nouvelleConsultation()">
+        + Nouvelle consultation
+      </button>
+    </div>
+
+    <!-- STATS RAPIDES -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ consultations.length }}</div>
+        <div class="stat-label">Consultations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ patient.user.telephone || '—' }}</div>
+        <div class="stat-label">Téléphone</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ patient.user.email }}</div>
+        <div class="stat-label">Email</div>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="section-title">Historique des consultations</div>
+
+    <div class="empty" *ngIf="consultations.length === 0">
+      Aucune consultation enregistrée pour ce patient.
+    </div>
+
+    <div class="timeline" *ngIf="consultations.length > 0">
+
+      <div class="timeline-item" *ngFor="let c of consultations">
+
+        <!-- EN-TÊTE consultation -->
+        <div class="consult-header" (click)="ouvrirDetail(c)">
+          <div class="consult-dot"></div>
+          <div class="consult-info">
+            <div class="consult-date">{{ formatDate(c.dateConsultation!) }}</div>
+            <div class="consult-heure">{{ formatHeure(c.dateConsultation!) }}</div>
+          </div>
+          <span class="badge" [ngClass]="typeBadgeClass(c.type)">
+            {{ typeLabel(c.type) }}
+          </span>
+          <div class="consult-chevron" [class.open]="consultationSelectionnee?.id === c.id">›</div>
+        </div>
+
+        <!-- DÉTAIL consultation (accordéon) -->
+        <div class="consult-detail" *ngIf="consultationSelectionnee?.id === c.id">
+
+          <!-- Compte-rendu -->
+          <div class="detail-section">
+            <div class="detail-label">Compte-rendu</div>
+            <div class="detail-text">{{ c.compteRendu || '—' }}</div>
+          </div>
+
+          <!-- Objectifs -->
+          <div class="detail-section" *ngIf="c.objectifsMois">
+            <div class="detail-label">Objectifs du mois</div>
+            <div class="detail-text">{{ c.objectifsMois }}</div>
+          </div>
+
+          <!-- Résumé IA -->
+          <div class="detail-section ia-block" *ngIf="c.resumeIA">
+            <div class="detail-label">🤖 Résumé IA</div>
+            <div class="detail-text">{{ c.resumeIA }}</div>
+          </div>
+
+          <!-- Mesures -->
+          <div class="detail-section" *ngIf="c.mesures && c.mesures.length > 0">
+            <div class="detail-label">Mesures ({{ c.mesures.length }})</div>
+            <div class="mesures-grid">
+              <div class="mesure-chip" *ngFor="let m of c.mesures">
+                <div class="mesure-type">{{ m.type | titlecase }}</div>
+                <div class="mesure-val">
+                  {{ m.valeur }}{{ m.valeur2 ? '/' + m.valeur2 : '' }} {{ m.unite }}
+                </div>
+                <span class="badge badge-sm" [ngClass]="niveauClass(m.niveauAlerte)">
+                  {{ m.niveauAlerte ?? 'NORMAL' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ordonnance -->
+          <div class="detail-section" *ngIf="c.ordonnance?.medicaments?.length">
+            <div class="detail-label">
+              Ordonnance · expire le {{ formatDate(c.ordonnance!.dateExpiration) }}
+            </div>
+            <div class="medic-list">
+              <div class="medic-item" *ngFor="let m of c.ordonnance!.medicaments">
+                <span class="medic-icon">💊</span>
+                <div>
+                  <div class="medic-nom">{{ m.nomMedicament }}</div>
+                  <div class="medic-detail">{{ m.dosage }} · {{ m.posologie }} · {{ m.dureeJours }}j</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

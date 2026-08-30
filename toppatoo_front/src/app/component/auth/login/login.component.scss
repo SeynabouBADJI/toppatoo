@@ -1,0 +1,470 @@
+// ─── VARIABLES PERSONNALISÉES ──────────────────────────────────
+$vert: #1d9e75;        // vert principal — boutons, accents
+$vert-clair: #e1f5ee;  // fond vert très clair — badges, avatars
+$vert-pale: #f3faf7;   // fond page, hover
+$vert-fonce: #0f6e56;  // texte vert foncé, hover boutons
+$vert-dark: #085041;   // vert très foncé — titres de sections
+
+$danger: #dc2626;
+$danger-light: #ef4444;
+$success: #1d9e75;
+$gray-50: #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-600: #475569;
+$gray-700: #334155;
+$gray-800: #1e293b;
+$gray-900: #0f172a;
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+$radius-lg: 16px;
+$radius-md: 12px;
+$radius-sm: 8px;
+$transition: all 0.3s ease;
+
+// ─── CONTAINER ──────────────────────────────────────────────────
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $vert-pale;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+
+  // Motif décoratif
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($vert, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba($vert, 0.04) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+}
+
+// ─── CARD ──────────────────────────────────────────────────────
+.login-card {
+  background: white;
+  border-radius: $radius-lg;
+  padding: 40px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: $shadow-xl;
+  position: relative;
+  z-index: 1;
+  max-height: 95vh;
+  overflow-y: auto;
+
+  // Bordure verte en haut
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: $vert;
+    border-radius: 0 0 4px 4px;
+  }
+}
+
+// ─── LOGO ──────────────────────────────────────────────────────
+.logo {
+  text-align: center;
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 28px;
+    color: $vert-dark;
+    margin: 0;
+    font-weight: 700;
+
+    span {
+      color: $vert;
+    }
+  }
+
+  .subtitle {
+    color: $gray-500;
+    font-size: 14px;
+    margin: 4px 0 0;
+  }
+}
+
+// ─── CHOIX DU RÔLE ─────────────────────────────────────────────
+.choix-role {
+  text-align: center;
+
+  h2 {
+    font-size: 22px;
+    color: $gray-900;
+    margin-bottom: 8px;
+  }
+
+  .text-muted {
+    color: $gray-500;
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+}
+
+.role-buttons {
+  display: flex;
+  gap: 16px;
+
+  .btn-role {
+    flex: 1;
+    padding: 28px 16px;
+    border: 2px solid $gray-200;
+    border-radius: $radius-md;
+    background: white;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      border-color: $vert;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba($vert, 0.15);
+      background: $vert-pale;
+    }
+
+    &:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    .icon {
+      font-size: 36px;
+    }
+
+    .label {
+      font-weight: 600;
+      color: $gray-900;
+      font-size: 16px;
+    }
+
+    .desc {
+      font-size: 12px;
+      color: $gray-500;
+    }
+  }
+}
+
+// ─── FORMULAIRES ───────────────────────────────────────────────
+.login-form,
+.register-form {
+  h2 {
+    font-size: 22px;
+    color: $gray-900;
+    margin-bottom: 4px;
+  }
+
+  .text-muted {
+    color: $gray-500;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $gray-700;
+    margin-bottom: 4px;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  transition: $transition;
+  box-sizing: border-box;
+  background: white;
+
+  &:focus {
+    outline: none;
+    border-color: $vert;
+    box-shadow: 0 0 0 4px rgba($vert, 0.1);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $vert;
+  }
+
+  &:disabled {
+    background: $gray-100;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: $danger;
+    box-shadow: 0 0 0 4px rgba($danger, 0.1);
+  }
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.error {
+  color: $danger;
+  font-size: 12px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &::before {
+    content: '⚠️';
+    font-size: 12px;
+  }
+}
+
+// ─── ALERTES ────────────────────────────────────────────────────
+.alert {
+  padding: 12px 16px;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideDown 0.3s ease;
+
+  .icon {
+    font-size: 18px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-danger {
+  background: #fef2f2;
+  color: $danger;
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background: $vert-clair;
+  color: $vert-fonce;
+  border: 1px solid $vert;
+}
+
+// ─── BOUTONS ────────────────────────────────────────────────────
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+.btn-primary {
+  background: $vert;
+  color: white;
+  box-shadow: 0 4px 12px rgba($vert, 0.3);
+
+  &:hover:not(:disabled) {
+    background: $vert-fonce;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba($vert, 0.4);
+  }
+}
+
+.btn-success {
+  background: $vert;
+  color: white;
+  box-shadow: 0 4px 12px rgba($vert, 0.3);
+
+  &:hover:not(:disabled) {
+    background: $vert-fonce;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba($vert, 0.4);
+  }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ─── LIENS ──────────────────────────────────────────────────────
+.links {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+
+  a {
+    color: $vert;
+    text-decoration: none;
+    cursor: pointer;
+    transition: $transition;
+    font-weight: 500;
+
+    &:hover {
+      color: $vert-fonce;
+      text-decoration: underline;
+    }
+  }
+
+  .separator {
+    margin: 0 12px;
+    color: $gray-300;
+  }
+}
+
+// ─── SCROLLBAR ──────────────────────────────────────────────────
+.login-card::-webkit-scrollbar {
+  width: 4px;
+}
+
+.login-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.login-card::-webkit-scrollbar-thumb {
+  background: $vert-clair;
+  border-radius: 4px;
+
+  &:hover {
+    background: $vert;
+  }
+}
+
+// ─── RESPONSIVE ─────────────────────────────────────────────────
+@media (max-width: 640px) {
+  .login-card {
+    padding: 24px;
+    max-height: 98vh;
+  }
+
+  .role-buttons {
+    flex-direction: column;
+
+    .btn-role {
+      padding: 20px 16px;
+      flex-direction: row;
+      gap: 16px;
+
+      .icon {
+        font-size: 28px;
+      }
+
+      .label {
+        font-size: 15px;
+      }
+
+      .desc {
+        font-size: 11px;
+      }
+    }
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .logo h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 400px) {
+  .login-card {
+    padding: 16px;
+    border-radius: $radius-md;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  .form-control {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
