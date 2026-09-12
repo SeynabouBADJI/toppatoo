@@ -1,11 +1,12 @@
 <div class="layout">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
 
     <!-- Logo -->
     <div class="sidebar-logo">
-      <div class="logo-icon">🩺</div>
+      <div class="logo-icon-box">
+        <i class="ti ti-heart-rate-monitor" aria-hidden="true"></i>
+      </div>
       <div>
         <div class="logo-name">Toppatoo</div>
         <div class="logo-sub">Espace médecin</div>
@@ -14,45 +15,55 @@
 
     <!-- Navigation -->
     <nav class="sidebar-nav">
-      <div class="nav-label">Principal</div>
+
+      <div class="nav-section-label">Principal</div>
 
       <a class="nav-item" routerLink="/medecin/patients"
          routerLinkActive="nav-item--active"
          [routerLinkActiveOptions]="{exact: false}">
-        <i class="ti ti-users nav-icon"></i>
+        <i class="ti ti-users" aria-hidden="true"></i>
         <span>Mes patients</span>
       </a>
 
       <a class="nav-item" routerLink="/medecin/rendez-vous"
          routerLinkActive="nav-item--active">
-        <i class="ti ti-calendar nav-icon"></i>
+        <i class="ti ti-calendar-event" aria-hidden="true"></i>
         <span>Rendez-vous</span>
       </a>
 
       <a class="nav-item" routerLink="/medecin/alertes"
          routerLinkActive="nav-item--active">
-        <i class="ti ti-bell nav-icon"></i>
+        <i class="ti ti-bell" aria-hidden="true"></i>
         <span>Alertes</span>
       </a>
 
+      <div class="nav-divider"></div>
+
+      <div class="nav-section-label">Compte</div>
+
+      <button class="nav-item nav-item--btn" (click)="retourLogin()">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i>
+        <span>Retour connexion</span>
+      </button>
+
     </nav>
 
-    <!-- Profil médecin -->
+    <!-- Footer profil -->
     <div class="sidebar-footer">
       <div class="medecin-info">
         <div class="avatar">{{ initiales() }}</div>
         <div class="medecin-texte">
           <div class="medecin-nom">Dr. {{ prenom }} {{ nom }}</div>
+          <div class="medecin-specialite">Médecin</div>
         </div>
       </div>
       <button class="btn-deconnexion" (click)="deconnexion()" title="Se déconnecter">
-        <i class="ti ti-logout"></i>
+        <i class="ti ti-logout" aria-hidden="true"></i>
       </button>
     </div>
 
   </aside>
 
-  <!-- CONTENU -->
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>

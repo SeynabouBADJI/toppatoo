@@ -11,12 +11,8 @@ import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/rou
 })
 export class MedecinLayoutComponent implements OnInit {
 
-  nom = sessionStorage.getItem('nom') ?? '';
+  nom    = sessionStorage.getItem('nom')    ?? '';
   prenom = sessionStorage.getItem('prenom') ?? '';
-
-  initiales(): string {
-    return ((this.prenom?.charAt(0) ?? '') + (this.nom?.charAt(0) ?? '')).toUpperCase();
-  }
 
   constructor(private router: Router) {}
 
@@ -26,8 +22,17 @@ export class MedecinLayoutComponent implements OnInit {
     }
   }
 
+  initiales(): string {
+    return ((this.prenom?.charAt(0) ?? '') + (this.nom?.charAt(0) ?? '')).toUpperCase();
+  }
+
+  retourLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
   deconnexion(): void {
     sessionStorage.clear();
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 }

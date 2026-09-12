@@ -1,12 +1,13 @@
 :host {
-  --vert: #1d9e75;
-  --vert-clair: #e1f5ee;
-  --vert-fonce: #0f6e56;
-  --bg-page: #f0f7f4;
-  --texte: #18181b;
-  --muted: #6b7280;
-  --border: rgba(0,0,0,0.08);
-  --sidebar-w: 220px;
+  --vert:        #1d9e75;
+  --vert-clair:  #e1f5ee;
+  --vert-pale:   #f3faf7;
+  --vert-fonce:  #0f6e56;
+  --bg-page:     #f0f7f4;
+  --texte:       #18181b;
+  --muted:       #6b7280;
+  --border:      rgba(0,0,0,0.08);
+  --sidebar-w:   230px;
   display: block;
   font-family: 'DM Sans', sans-serif;
 }
@@ -16,7 +17,7 @@
   min-height: 100vh;
 }
 
-/* ── SIDEBAR ────────────────────────────── */
+/* ── SIDEBAR ─────────────────────────────── */
 .sidebar {
   width: var(--sidebar-w);
   min-height: 100vh;
@@ -25,28 +26,40 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  top: 0; left: 0; bottom: 0;
   z-index: 100;
 }
 
+/* Logo */
 .sidebar-logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 20px;
+  padding: 18px 18px 14px;
   border-bottom: 0.5px solid var(--border);
-  margin-bottom: 16px;
 }
 
-.logo-icon { font-size: 22px; }
+.logo-icon-box {
+  width: 32px;
+  height: 32px;
+  background: var(--vert-clair);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon-box i {
+  font-size: 17px;
+  color: var(--vert-fonce);
+}
 
 .logo-name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--vert);
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .logo-sub {
@@ -54,22 +67,31 @@
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-top: 1px;
 }
 
-/* Nav */
+/* Navigation */
 .sidebar-nav {
   flex: 1;
-  padding: 0 12px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   overflow-y: auto;
 }
 
-.nav-label {
-  font-size: 10px;
-  font-weight: 600;
+.nav-section-label {
+  font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 0 12px 8px;
+  letter-spacing: 0.8px;
+  padding: 4px 10px 6px;
+}
+
+.nav-divider {
+  height: 0.5px;
+  background: var(--border);
+  margin: 10px 0;
 }
 
 .nav-item {
@@ -77,32 +99,40 @@
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   color: var(--muted);
   font-size: 13px;
   font-weight: 400;
   text-decoration: none;
-  transition: all 0.15s;
-  margin-bottom: 2px;
+  transition: background 0.15s, color 0.15s;
   cursor: pointer;
 }
 
 .nav-item:hover {
-  background: var(--vert-clair);
+  background: var(--vert-pale);
   color: var(--vert-fonce);
 }
 
+.nav-item i { font-size: 17px; flex-shrink: 0; }
+
 .nav-item--active {
-  background: var(--vert-clair);
-  color: var(--vert-fonce);
+  background: var(--vert-clair) !important;
+  color: var(--vert-fonce) !important;
   font-weight: 500;
 }
 
-.nav-icon {
-  font-size: 17px;
-  width: 20px;
-  text-align: center;
-  flex-shrink: 0;
+/* Bouton nav (retour connexion) */
+.nav-item--btn {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.nav-item--btn:hover {
+  background: #f1f5f9;
+  color: var(--texte);
 }
 
 /* Footer */
@@ -111,30 +141,32 @@
   border-top: 0.5px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .medecin-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   flex: 1;
   min-width: 0;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--vert-clair);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--vert-fonce);
   flex-shrink: 0;
 }
+
+.medecin-texte { min-width: 0; }
 
 .medecin-nom {
   font-size: 13px;
@@ -145,17 +177,25 @@
   text-overflow: ellipsis;
 }
 
+.medecin-specialite {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
 .btn-deconnexion {
+  width: 30px;
+  height: 30px;
   background: none;
   border: none;
   color: var(--muted);
   cursor: pointer;
-  padding: 6px;
   border-radius: 8px;
-  font-size: 18px;
   display: flex;
   align-items: center;
-  transition: all 0.15s;
+  justify-content: center;
+  font-size: 17px;
+  transition: background 0.15s, color 0.15s;
   flex-shrink: 0;
 }
 
@@ -164,7 +204,7 @@
   color: #dc2626;
 }
 
-/* ── CONTENU ───────────────────────────── */
+/* ── CONTENU ──────────────────────────────── */
 .main-content {
   margin-left: var(--sidebar-w);
   flex: 1;
