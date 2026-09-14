@@ -1,7 +1,7 @@
 export interface RendezVous {
-  id?: string;
-  patientId: string;
-  medecinId: string;
+  id: number;  // ✅ id obligatoire
+  patientId: number;
+  medecinId: number;
   medecinNom?: string;
   dateHeure: string;
   motif: string;

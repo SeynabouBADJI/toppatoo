@@ -1,5 +1,5 @@
 export interface Mesure {
-  id?: string;
+  id?: number;
   type: string;
   valeur: number;
   valeur2?: number;
@@ -7,10 +7,12 @@ export interface Mesure {
   niveauAlerte?: string;
   dateMesure?: string;
   notes?: string;
+  patientId?: number;
+  consultationId?: number;
 }
 
 export interface LigneMedicament {
-  id?: string;
+  id?: number;
   nomMedicament: string;
   dosage: string;
   posologie: string;
@@ -20,7 +22,7 @@ export interface LigneMedicament {
 }
 
 export interface Ordonnance {
-  id?: string;
+  id?: number;
   dateEmission?: string;
   dateExpiration: string;
   notes?: string;
@@ -28,9 +30,9 @@ export interface Ordonnance {
 }
 
 export interface Consultation {
-  id?: string;
-  patientId: string;
-  medecinId: string;
+  id?: number;
+  patientId: number;
+  medecinId: number;
   medecinNom?: string;
   dateConsultation?: string;
   compteRendu: string;

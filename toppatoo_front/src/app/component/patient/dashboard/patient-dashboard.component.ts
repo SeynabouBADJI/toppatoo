@@ -19,7 +19,9 @@ import { Notification } from '../../../core/models/notification.model';
 })
 export class PatientDashboardComponent implements OnInit {
 
-  userId = sessionStorage.getItem('userId') ?? '';
+  // ✅ Utiliser number
+  userId: number = 0;
+  patientId: number = 0;
 
   patient: Patient | null = null;
   derniereConsultation: Consultation | null = null;
@@ -39,6 +41,9 @@ export class PatientDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const id = sessionStorage.getItem('userId');
+    this.userId = id ? Number(id) : 0;
+
     if (!this.userId) {
       this.router.navigate(['/login']);
       return;
@@ -50,8 +55,9 @@ export class PatientDashboardComponent implements OnInit {
     this.patientService.getPatientById(this.userId).subscribe({
       next: (patient) => {
         this.patient = patient;
+        this.patientId = patient.id;  // ✅ number
         this.loading = false;
-        this.chargerSuite(patient.id);
+        this.chargerSuite(patient.id);  // ✅ number
       },
       error: () => {
         this.erreur = 'Impossible de charger votre profil.';
@@ -60,8 +66,8 @@ export class PatientDashboardComponent implements OnInit {
     });
   }
 
-  chargerSuite(patientId: string): void {
-    this.consultationService.getDerniere(patientId).subscribe({
+  chargerSuite(patientId: number): void {  // ✅ number
+    this.consultationService.getDerniere(patientId).subscribe({  // ✅ number
       next: (c) => {
         this.derniereConsultation = c;
         this.mesures = c?.mesures ?? [];
@@ -80,7 +86,7 @@ export class PatientDashboardComponent implements OnInit {
     });
   }
 
-  // ─── Initiales ──────────────────────────────────────────────────
+  // ─── INITIALES ──────────────────────────────────────────────────
   initiales(): string {
     if (!this.patient) return '';
     const p = this.patient.user.prenom?.charAt(0) ?? '';
@@ -88,13 +94,13 @@ export class PatientDashboardComponent implements OnInit {
     return (p + n).toUpperCase();
   }
 
-  // ─── Libellé de la maladie ────────────────────────────────────
+  // ─── LIBELLÉ MALADIE ──────────────────────────────────────────
   maladieLabel(): string {
     if (!this.patient) return '';
     return MALADIE_LABELS[this.patient.maladieChronique] ?? this.patient.maladieChronique;
   }
 
-  // ─── Date consultation ────────────────────────────────────────
+  // ─── DATES ────────────────────────────────────────────────────
   formatConsultDate(date?: string): string {
     if (!date) return '';
     return new Date(date).toLocaleDateString('fr-FR', {
@@ -102,7 +108,6 @@ export class PatientDashboardComponent implements OnInit {
     });
   }
 
-  // ─── Date générique ───────────────────────────────────────────
   formatDate(date?: string): string {
     if (!date) return '';
     return new Date(date).toLocaleDateString('fr-FR', {
@@ -110,7 +115,6 @@ export class PatientDashboardComponent implements OnInit {
     });
   }
 
-  // ─── Jours avant RDV ─────────────────────────────────────────
   joursAvantRdv(): number {
     if (!this.prochainRdv) return 0;
     const rdv = new Date(this.prochainRdv.dateHeure);
@@ -118,7 +122,7 @@ export class PatientDashboardComponent implements OnInit {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
-  // ─── Mesures ──────────────────────────────────────────────────
+  // ─── MESURES ──────────────────────────────────────────────────
   getMesure(type: string): Mesure | undefined {
     return this.mesures.find(m => m.type === type);
   }
@@ -147,7 +151,7 @@ export class PatientDashboardComponent implements OnInit {
     ).length;
   }
 
-  // ─── Dates ────────────────────────────────────────────────────
+  // ─── DATES ────────────────────────────────────────────────────
   formatDateRdv(): string {
     if (!this.prochainRdv) return '';
     const date = new Date(this.prochainRdv.dateHeure);
@@ -172,28 +176,10 @@ export class PatientDashboardComponent implements OnInit {
     });
   }
 
-  // ─── Actions ──────────────────────────────────────────────────
+  // ─── ACTIONS ──────────────────────────────────────────────────
   
-  /**
-   * Marquer une notification comme lue
-   */
-  marquerLu(id: string): void {
-    this.notificationService.marquerLue(id).subscribe({
-      next: () => {
-        const notif = this.notifications.find(n => n.id === id);
-        if (notif) {
-          notif.lue = true;
-        }
-      },
-      error: (err) => {
-        console.error('Erreur lors du marquage de la notification:', err);
-      }
-    });
-  }
+  
 
-  /**
-   * Marquer toutes les notifications comme lues
-   */
   marquerToutLu(): void {
     if (!this.patient || this.notifications.length === 0) return;
     
@@ -201,48 +187,32 @@ export class PatientDashboardComponent implements OnInit {
     if (nonLues.length === 0) return;
     
     nonLues.forEach(notif => {
-      this.notificationService.marquerLue(notif.id).subscribe({
-        next: () => {
-          notif.lue = true;
-        },
-        error: (err) => {
-          console.error('Erreur lors du marquage:', err);
-        }
-      });
+      if (notif.id) {  // ✅ Vérifier que id existe
+        this.notificationService.marquerLue(notif.id).subscribe({
+          next: () => {
+            notif.lue = true;
+          },
+          error: (err) => {
+            console.error('Erreur:', err);
+          }
+        });
+      }
     });
   }
+  
 
-  /**
-   * Supprimer une notification (suppression locale)
-   */
-  supprimerNotification(id: string): void {
-    this.notifications = this.notifications.filter(n => n.id !== id);
-  }
-
-  /**
-   * Voir l'historique d'une mesure
-   */
   voirHistorique(type: string): void {
     this.router.navigate(['/mesures', type]);
   }
 
-  /**
-   * Voir les détails d'un médicament
-   */
   voirDetailMedicament(medicament: any): void {
     this.router.navigate(['/medicaments', medicament.id]);
   }
 
-  /**
-   * Demander un rendez-vous
-   */
   demanderRdv(): void {
     this.router.navigate(['/rendez-vous/nouveau']);
   }
 
-  /**
-   * Scroll vers les notifications
-   */
   scrollToNotifications(): void {
     const element = document.getElementById('notifications-section');
     if (element) {
@@ -250,50 +220,55 @@ export class PatientDashboardComponent implements OnInit {
     }
   }
 
-  /**
-   * Recharger la page en cas d'erreur
-   */
   rechargerPage(): void {
     this.erreur = '';
     this.loading = true;
     this.chargerDonnees();
   }
 
-  /**
-   * Exécuter une action depuis une notification
-   */
-  executerAction(id: string, action: any): void {
-    switch(action.type) {
-      case 'VOIR_RDV':
-        this.router.navigate(['/rendez-vous']);
-        break;
-      case 'PRENDRE_RDV':
-        this.demanderRdv();
-        break;
-      case 'VOIR_MESURE':
-        this.router.navigate(['/mesures']);
-        break;
-      default:
-        console.log('Action non reconnue:', action);
-    }
-    
-    // Marquer la notification comme lue après action
-    this.marquerLu(id);
-  }
+  // ✅ Modifier marquerLu pour accepter number | undefined
+marquerLu(id: number | undefined): void {
+  if (id === undefined) return;
+  
+  this.notificationService.marquerLue(id).subscribe({
+    next: () => {
+      const notif = this.notifications.find(n => n.id === id);
+      if (notif) notif.lue = true;
+    },
+    error: (err) => console.error('Erreur:', err)
+  });
+}
 
-  /**
-   * Retourner à la page de connexion
-   */
+// ✅ Modifier executerAction pour accepter number | undefined
+executerAction(id: number | undefined, action: any): void {
+  if (id === undefined) return;
+  
+  switch(action.type) {
+    case 'VOIR_RDV':
+      this.router.navigate(['/rendez-vous']);
+      break;
+    case 'PRENDRE_RDV':
+      this.demanderRdv();
+      break;
+    case 'VOIR_MESURE':
+      this.router.navigate(['/mesures']);
+      break;
+  }
+  this.marquerLu(id);
+}
+
+// ✅ Modifier supprimerNotification pour accepter number | undefined
+supprimerNotification(id: number | undefined): void {
+  if (id === undefined) return;
+  this.notifications = this.notifications.filter(n => n.id !== id);
+}
+
   retourConnexion(): void {
-    // Option avec confirmation pour éviter les clics accidentels
     if (confirm('Voulez-vous vraiment retourner à la page de connexion ?')) {
-      // Nettoyer la session (optionnel)
-      // sessionStorage.clear();
       this.router.navigate(['/login']);
     }
   }
 
-  // ─── Déconnexion ──────────────────────────────────────────────
   deconnexion(): void {
     sessionStorage.clear();
     this.router.navigate(['/login']);

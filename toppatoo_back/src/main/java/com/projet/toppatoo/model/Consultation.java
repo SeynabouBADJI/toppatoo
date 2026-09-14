@@ -15,38 +15,38 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Consultation {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "patient_id")
-    private Long patientId;  // ✅ La propriété utilisée dans mappedBy
-    
+    private Long patientId;
+
     @Column(name = "medecin_id")
     private Long medecinId;
-    
+
     @Column(name = "medecin_nom")
     private String medecinNom;
-    
+
     @Column(name = "date_consultation")
     private LocalDateTime dateConsultation;
-    
+
     @Column(name = "compte_rendu", columnDefinition = "TEXT")
     private String compteRendu;
-    
+
     @Column(name = "objectifs_mois")
     private String objectifsMois;
-    
+
     private String type;
-    
+
     @Column(name = "resume_ia", columnDefinition = "TEXT")
     private String resumeIA;
-    
+
+    // ✅ Charger les mesures par requête séparée
     @OneToMany(mappedBy = "consultationId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Mesure> mesures;
-    
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ordonnance_id")
-    private Ordonnance ordonnance;
+
+    // ❌ NE PAS METTRE la relation @OneToOne vers Ordonnance
+    // On la chargera via ordonnanceRepository.findByConsultationId()
 }

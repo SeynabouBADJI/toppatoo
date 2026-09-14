@@ -1,14 +1,30 @@
 package com.projet.toppatoo.service.impl;
 
-import com.projet.toppatoo.dto.*;
-import com.projet.toppatoo.model.*;
-import com.projet.toppatoo.repository.*;
+import com.projet.toppatoo.dto.ConsultationCreateDTO;
+import com.projet.toppatoo.dto.ConsultationDTO;
+import com.projet.toppatoo.dto.LigneMedicamentDTO;
+import com.projet.toppatoo.dto.MesureCreateDTO;
+import com.projet.toppatoo.dto.MesureDTO;
+import com.projet.toppatoo.dto.OrdonnanceCreateDTO;
+import com.projet.toppatoo.dto.OrdonnanceDTO;
+import com.projet.toppatoo.model.Consultation;
+import com.projet.toppatoo.model.LigneMedicament;
+import com.projet.toppatoo.model.Mesure;
+import com.projet.toppatoo.model.Ordonnance;
+import com.projet.toppatoo.model.Patient;
+import com.projet.toppatoo.repository.ConsultationRepository;
+import com.projet.toppatoo.repository.LigneMedicamentRepository;
+import com.projet.toppatoo.repository.MesureRepository;
+import com.projet.toppatoo.repository.OrdonnanceRepository;
+import com.projet.toppatoo.repository.PatientRepository;
 import com.projet.toppatoo.service.ConsultationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +38,9 @@ public class ConsultationServiceImpl implements ConsultationService {
     private final OrdonnanceRepository ordonnanceRepository;
     private final LigneMedicamentRepository ligneMedicamentRepository;
 
-    @Override
-    public ConsultationDTO getConsultationById(Long id) {
-        return mapToDTO(consultationRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Consultation non trouvée: " + id)));
-    }
-
+    // ═══════════════════════════════════════════════════════════════
+    // CRÉER UNE CONSULTATION
+    // ═══════════════════════════════════════════════════════════════
     @Override
     @Transactional
     public ConsultationDTO creerConsultation(ConsultationCreateDTO request) {
@@ -41,6 +54,7 @@ public class ConsultationServiceImpl implements ConsultationService {
         consultation.setObjectifsMois(request.getObjectifsMois());
         consultation.setType(request.getType());
         consultation.setDateConsultation(LocalDateTime.now());
+
         if (patient.getMedecinNom() != null) {
             consultation.setMedecinNom(patient.getMedecinNom());
         }
@@ -48,15 +62,30 @@ public class ConsultationServiceImpl implements ConsultationService {
         return mapToDTO(consultationRepository.save(consultation));
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // GET BY ID
+    // ═══════════════════════════════════════════════════════════════
+    @Override
+    public ConsultationDTO getConsultationById(Long id) {
+        return mapToDTO(consultationRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Consultation non trouvée: " + id)));
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // AJOUTER UNE MESURE
+    // ═══════════════════════════════════════════════════════════════
     @Override
     @Transactional
     public MesureDTO ajouterMesure(Long consultationId, MesureCreateDTO request) {
         Consultation consultation = consultationRepository.findById(consultationId)
             .orElseThrow(() -> new RuntimeException("Consultation non trouvée: " + consultationId));
 
-        // Déterminer le niveau d'alerte
+        // Calculer le niveau d'alerte
         String niveauAlerte = calculerNiveauAlerte(
-            request.getType(), request.getValeur(), consultation.getPatientId()
+            request.getType(), 
+            request.getValeur(), 
+            request.getValeur2(),
+            consultation.getPatientId()
         );
 
         Mesure mesure = new Mesure();
@@ -70,23 +99,36 @@ public class ConsultationServiceImpl implements ConsultationService {
         mesure.setConsultationId(consultationId);
         mesure.setPatientId(consultation.getPatientId());
 
-        return MesureDTO.from(mesureRepository.save(mesure));
+        return mapMesureToDTO(mesureRepository.save(mesure));
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // AJOUTER UNE ORDONNANCE
+    // ═══════════════════════════════════════════════════════════════
     @Override
     @Transactional
     public OrdonnanceDTO ajouterOrdonnance(Long consultationId, OrdonnanceCreateDTO request) {
         Consultation consultation = consultationRepository.findById(consultationId)
             .orElseThrow(() -> new RuntimeException("Consultation non trouvée: " + consultationId));
 
+        // Créer l'ordonnance
         Ordonnance ordonnance = new Ordonnance();
         ordonnance.setNotes(request.getNotes());
-        ordonnance.setDateExpiration(request.getDateExpiration());
         ordonnance.setConsultationId(consultationId);
+        ordonnance.setDateEmission(LocalDate.now());
+        ordonnance.setDateExpiration(
+            request.getDateExpiration() != null 
+                ? request.getDateExpiration() 
+                : LocalDate.now().plusMonths(1)
+        );
+
         Ordonnance savedOrdonnance = ordonnanceRepository.save(ordonnance);
 
-        if (request.getMedicaments() != null) {
-            request.getMedicaments().forEach(m -> {
+        // Créer les lignes de médicaments
+        List<LigneMedicament> lignesSauvegardees = new ArrayList<>();
+
+        if (request.getMedicaments() != null && !request.getMedicaments().isEmpty()) {
+            for (LigneMedicamentDTO m : request.getMedicaments()) {
                 LigneMedicament ligne = new LigneMedicament();
                 ligne.setNomMedicament(m.getNomMedicament());
                 ligne.setDosage(m.getDosage());
@@ -95,28 +137,35 @@ public class ConsultationServiceImpl implements ConsultationService {
                 ligne.setHeuresRappel(m.getHeuresRappel());
                 ligne.setInstructions(m.getInstructions());
                 ligne.setOrdonnanceId(savedOrdonnance.getId());
-                ligneMedicamentRepository.save(ligne);
-            });
+                lignesSauvegardees.add(ligneMedicamentRepository.save(ligne));
+            }
         }
 
-        consultation.setOrdonnance(savedOrdonnance);
-        consultationRepository.save(consultation);
+        savedOrdonnance.setMedicaments(lignesSauvegardees);
 
-        return OrdonnanceDTO.from(ordonnanceRepository.findById(savedOrdonnance.getId()).orElse(savedOrdonnance));
+        return mapOrdonnanceToDTO(savedOrdonnance);
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // UPDATE CONSULTATION
+    // ═══════════════════════════════════════════════════════════════
     @Override
     @Transactional
     public ConsultationDTO updateConsultation(Long id, ConsultationDTO dto) {
         Consultation consultation = consultationRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Consultation non trouvée: " + id));
+
         consultation.setCompteRendu(dto.getCompteRendu());
         consultation.setObjectifsMois(dto.getObjectifsMois());
         consultation.setType(dto.getType());
         consultation.setResumeIA(dto.getResumeIA());
+
         return mapToDTO(consultationRepository.save(consultation));
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // DELETE CONSULTATION
+    // ═══════════════════════════════════════════════════════════════
     @Override
     @Transactional
     public void deleteConsultation(Long id) {
@@ -126,44 +175,85 @@ public class ConsultationServiceImpl implements ConsultationService {
         consultationRepository.deleteById(id);
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // GET BY PATIENT
+    // ═══════════════════════════════════════════════════════════════
     @Override
     public List<ConsultationDTO> getConsultationsByPatient(Long patientId) {
         return consultationRepository.findByPatientId(patientId)
-            .stream().map(this::mapToDTO).collect(Collectors.toList());
+            .stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // DERNIÈRE CONSULTATION
+    // ═══════════════════════════════════════════════════════════════
     @Override
     public ConsultationDTO getDerniereConsultation(Long patientId) {
         return consultationRepository.findByPatientId(patientId)
             .stream()
-            .max((a, b) -> a.getDateConsultation().compareTo(b.getDateConsultation()))
+            .max((a, b) -> {
+                if (a.getDateConsultation() == null && b.getDateConsultation() == null) return 0;
+                if (a.getDateConsultation() == null) return -1;
+                if (b.getDateConsultation() == null) return 1;
+                return a.getDateConsultation().compareTo(b.getDateConsultation());
+            })
             .map(this::mapToDTO)
             .orElse(null);
     }
 
-    private String calculerNiveauAlerte(String type, Double valeur, Long patientId) {
-        if (valeur == null) return "NORMAL";
-        switch (type) {
+    // ═══════════════════════════════════════════════════════════════
+    // CALCUL DU NIVEAU D'ALERTE
+    // ═══════════════════════════════════════════════════════════════
+    private String calculerNiveauAlerte(String type, Double valeur, Double valeur2, Long patientId) {
+        if (valeur == null || type == null) return "NORMAL";
+
+        // Récupérer les seuils du patient si disponibles
+        Patient patient = patientRepository.findById(patientId).orElse(null);
+
+        switch (type.toUpperCase()) {
             case "GLYCEMIE":
-                if (valeur > 2.0) return "CRITIQUE";
-                if (valeur > 1.4) return "ATTENTION";
+                double glyMin = patient != null && patient.getSeuilGlycemieMin() != null
+                    ? patient.getSeuilGlycemieMin() : 0.7;
+                double glyMax = patient != null && patient.getSeuilGlycemieMax() != null
+                    ? patient.getSeuilGlycemieMax() : 1.1;
+                
+                if (valeur < 0.5 || valeur > 2.0) return "CRITIQUE";
+                if (valeur < glyMin || valeur > glyMax) return "ATTENTION";
                 break;
+
             case "TENSION_ARTERIELLE":
-                if (valeur > 160) return "CRITIQUE";
-                if (valeur > 140) return "ATTENTION";
+                double syst = valeur;
+                double diast = valeur2 != null ? valeur2 : 0;
+                
+                if (syst >= 180 || diast >= 120 || syst < 90 || (diast > 0 && diast < 60)) return "CRITIQUE";
+                if (syst >= 140 || diast >= 90 || syst >= 130 || diast >= 85) return "ATTENTION";
                 break;
+
+            case "TEMPERATURE":
+                if (valeur < 35.0 || valeur >= 40.0) return "CRITIQUE";
+                if (valeur < 36.0 || valeur >= 38.0) return "ATTENTION";
+                break;
+
+            case "POIDS":
+                if (patient != null) {
+                    if (patient.getSeuilPoidsMin() != null && valeur < patient.getSeuilPoidsMin()) return "ATTENTION";
+                    if (patient.getSeuilPoidsMax() != null && valeur > patient.getSeuilPoidsMax()) return "ATTENTION";
+                }
+                break;
+
             case "FREQUENCE_CARDIAQUE":
-                if (valeur > 120 || valeur < 50) return "CRITIQUE";
-                if (valeur > 100 || valeur < 60) return "ATTENTION";
-                break;
-            case "SPO2":
-                if (valeur < 90) return "CRITIQUE";
-                if (valeur < 95) return "ATTENTION";
+                if (valeur < 40 || valeur > 150) return "CRITIQUE";
+                if (valeur < 60 || valeur > 100) return "ATTENTION";
                 break;
         }
         return "NORMAL";
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // MAPPING
+    // ═══════════════════════════════════════════════════════════════
     private ConsultationDTO mapToDTO(Consultation c) {
         ConsultationDTO dto = new ConsultationDTO();
         dto.setId(c.getId());
@@ -175,12 +265,71 @@ public class ConsultationServiceImpl implements ConsultationService {
         dto.setObjectifsMois(c.getObjectifsMois());
         dto.setType(c.getType());
         dto.setResumeIA(c.getResumeIA());
-        if (c.getMesures() != null) {
-            dto.setMesures(c.getMesures().stream().map(MesureDTO::from).collect(Collectors.toList()));
+
+        // Charger les mesures
+        List<Mesure> mesures = mesureRepository.findByConsultationId(c.getId());
+        if (mesures != null) {
+            dto.setMesures(mesures.stream()
+                .map(this::mapMesureToDTO)
+                .collect(Collectors.toList()));
         }
-        if (c.getOrdonnance() != null) {
-            dto.setOrdonnance(OrdonnanceDTO.from(c.getOrdonnance()));
+
+        // Charger l'ordonnance
+        Ordonnance ordonnance = ordonnanceRepository.findByConsultationId(c.getId()).orElse(null);
+        if (ordonnance != null) {
+            dto.setOrdonnance(mapOrdonnanceToDTO(ordonnance));
         }
+
+        return dto;
+    }
+
+    private MesureDTO mapMesureToDTO(Mesure m) {
+        MesureDTO dto = new MesureDTO();
+        dto.setId(m.getId());
+        dto.setType(m.getType());
+        dto.setValeur(m.getValeur());
+        dto.setValeur2(m.getValeur2());
+        dto.setUnite(m.getUnite());
+        dto.setNiveauAlerte(m.getNiveauAlerte());
+        dto.setDateMesure(m.getDateMesure());
+        dto.setNotes(m.getNotes());
+        dto.setPatientId(m.getPatientId());
+        dto.setConsultationId(m.getConsultationId());
+        return dto;
+    }
+
+    private OrdonnanceDTO mapOrdonnanceToDTO(Ordonnance o) {
+        OrdonnanceDTO dto = new OrdonnanceDTO();
+        dto.setId(o.getId());
+        dto.setConsultationId(o.getConsultationId());
+        dto.setDateEmission(o.getDateEmission());
+        dto.setDateExpiration(o.getDateExpiration());
+        dto.setNotes(o.getNotes());
+
+        // Charger les médicaments
+        List<LigneMedicament> medicaments = o.getMedicaments();
+        if (medicaments == null) {
+            medicaments = ligneMedicamentRepository.findByOrdonnanceId(o.getId());
+        }
+
+        if (medicaments != null) {
+            dto.setMedicaments(medicaments.stream()
+                .map(this::mapLigneToDTO)
+                .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+    private LigneMedicamentDTO mapLigneToDTO(LigneMedicament m) {
+        LigneMedicamentDTO dto = new LigneMedicamentDTO();
+        dto.setId(m.getId());
+        dto.setNomMedicament(m.getNomMedicament());
+        dto.setDosage(m.getDosage());
+        dto.setPosologie(m.getPosologie());
+        dto.setDureeJours(m.getDureeJours());
+        dto.setHeuresRappel(m.getHeuresRappel());
+        dto.setInstructions(m.getInstructions());
         return dto;
     }
 }

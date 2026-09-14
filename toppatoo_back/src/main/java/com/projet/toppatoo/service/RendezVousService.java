@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,65 +20,64 @@ public class RendezVousService {
         return rendezVousRepository.findAll();
     }
 
-    public RendezVous getRendezVousById(Long id) {
-        return rendezVousRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rendez-vous non trouvé"));
+    public Optional<RendezVous> getRendezVousById(Long id) {
+        return rendezVousRepository.findById(id);
+    }
+
+    public List<RendezVous> getByPatient(Long patientId) {
+        return rendezVousRepository.findByPatientId(patientId);
+    }
+
+    public List<RendezVous> getByMedecin(Long medecinId) {
+        return rendezVousRepository.findByMedecinId(medecinId);
+    }
+
+    // ✅ Prochain RDV d'un patient
+    public RendezVous getProchainRendezVous(Long patientId) {
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("📅 Recherche prochain RDV pour patient " + patientId + " après " + now);
+        
+        return rendezVousRepository
+            .findTopByPatientIdAndDateHeureAfterOrderByDateHeureAsc(patientId, now)
+            .orElse(null);
     }
 
     @Transactional
-    public RendezVous createRendezVous(RendezVous rendezVous) {
-        rendezVous.setStatut("PLANIFIE");
-        return rendezVousRepository.save(rendezVous);
+    public RendezVous createRendezVous(RendezVous rdv) {
+        rdv.setStatut("PLANIFIE");
+        return rendezVousRepository.save(rdv);
     }
 
     @Transactional
-    public RendezVous updateRendezVous(Long id, RendezVous rendezVous) {
+    public RendezVous updateRendezVous(Long id, RendezVous rdv) {
         if (!rendezVousRepository.existsById(id)) {
-            throw new RuntimeException("Rendez-vous non trouvé");
+            throw new RuntimeException("Rendez-vous non trouvé: " + id);
         }
-        rendezVous.setId(id);
-        return rendezVousRepository.save(rendezVous);
-    }
-
-    @Transactional
-    public void deleteRendezVous(Long id) {
-        if (!rendezVousRepository.existsById(id)) {
-            throw new RuntimeException("Rendez-vous non trouvé");
-        }
-        rendezVousRepository.deleteById(id);
+        rdv.setId(id);
+        return rendezVousRepository.save(rdv);
     }
 
     @Transactional
     public RendezVous confirmerRendezVous(Long id) {
-        RendezVous rdv = getRendezVousById(id);
+        RendezVous rdv = rendezVousRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Rendez-vous non trouvé: " + id));
         rdv.setStatut("CONFIRME");
         return rendezVousRepository.save(rdv);
     }
 
     @Transactional
     public RendezVous annulerRendezVous(Long id) {
-        RendezVous rdv = getRendezVousById(id);
+        RendezVous rdv = rendezVousRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Rendez-vous non trouvé: " + id));
         rdv.setStatut("ANNULE");
         return rendezVousRepository.save(rdv);
     }
 
-    public List<RendezVous> getRendezVousByPatient(Long patientId) {
-        return rendezVousRepository.findByPatientId(patientId);
-    }
-
-    public List<RendezVous> getRendezVousByMedecin(Long medecinId) {
-        return rendezVousRepository.findByMedecinId(medecinId);
-    }
-
-    public RendezVous getProchainRendezVous(Long patientId) {
-        LocalDateTime now = LocalDateTime.now();
-        return rendezVousRepository.findTopByPatientIdAndDateHeureAfterOrderByDateHeureAsc(patientId, now)
-                .orElse(null);
-    }
-
-    public List<RendezVous> getRendezVousAujourdhui() {
-        LocalDateTime debut = LocalDateTime.now().withHour(0).withMinute(0);
-        LocalDateTime fin = LocalDateTime.now().withHour(23).withMinute(59);
-        return rendezVousRepository.findRdvPourRappel(debut, fin);
+    @Transactional
+    public void deleteRendezVous(Long id) {
+        if (!rendezVousRepository.existsById(id)) {
+            throw new RuntimeException("Rendez-vous non trouvé: " + id);
+        }
+        rendezVousRepository.deleteById(id);
     }
 }

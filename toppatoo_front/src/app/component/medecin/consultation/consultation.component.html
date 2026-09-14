@@ -86,72 +86,107 @@
     </div>
 
     <!-- ═══ ETAPE 2 : MESURES ═══ -->
-    <div class="card" *ngIf="etape === 2">
-      <div class="card-title">Mesures cliniques</div>
+    <!-- ═══ ETAPE 2 : MESURES ═══ -->
+<div class="card" *ngIf="etape === 2">
+  <div class="card-title">Mesures cliniques</div>
 
-      <!-- Formulaire ajout mesure -->
-      <div class="mesure-form">
-        <div class="field-row">
-          <div class="field">
-            <label class="field-label">Type</label>
-            <select class="field-input" [(ngModel)]="nouvelleMesure.type" (change)="onTypeMesureChange()">
-              <option *ngFor="let t of typesMesure" [value]="t.value">{{ t.label }}</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label class="field-label">
-              {{ isTension() ? 'Systolique' : 'Valeur' }}
-            </label>
-            <input class="field-input" type="number" [(ngModel)]="nouvelleMesure.valeur"
-                   [placeholder]="nouvelleMesure.unite"/>
-          </div>
-
-          <div class="field" *ngIf="isTension()">
-            <label class="field-label">Diastolique</label>
-            <input class="field-input" type="number" [(ngModel)]="nouvelleMesure.valeur2"
-                   placeholder="mmHg"/>
-          </div>
-
-          <div class="field field-small">
-            <label class="field-label">Unité</label>
-            <input class="field-input" type="text" [(ngModel)]="nouvelleMesure.unite"/>
-          </div>
-
-          <button class="btn-ajouter" (click)="ajouterMesure()" [disabled]="saving">
-            + Ajouter
-          </button>
-        </div>
+  <!-- Formulaire ajout mesure -->
+  <div class="mesure-form">
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Type</label>
+        <select class="field-input" 
+                [(ngModel)]="nouvelleMesure.type" 
+                (change)="onTypeMesureChange()">
+          <option *ngFor="let t of typesMesure" [value]="t.value">
+            {{ t.label }}
+          </option>
+        </select>
       </div>
 
-      <!-- Liste mesures ajoutées -->
-      <div class="mesures-list" *ngIf="mesures.length > 0">
-        <div class="section-title">Mesures enregistrées ({{ mesures.length }})</div>
-        <div class="mesure-item" *ngFor="let m of mesures">
-          <div class="mesure-type">{{ m.type }}</div>
-          <div class="mesure-valeur">
-            {{ m.valeur }} {{ m.valeur2 ? '/ ' + m.valeur2 : '' }} {{ m.unite }}
-          </div>
-          <span class="badge" [ngClass]="getNiveauClass(m.niveauAlerte)">
-            {{ m.niveauAlerte ?? 'NORMAL' }}
-          </span>
-        </div>
+      <div class="field">
+        <label class="field-label">
+          {{ isTension() ? 'Systolique' : 'Valeur' }}
+        </label>
+        <input class="field-input" 
+               type="number" 
+               step="0.1"
+               [(ngModel)]="nouvelleMesure.valeur"
+               [placeholder]="nouvelleMesure.unite"/>
       </div>
 
-      <div class="state-msg-small" *ngIf="mesures.length === 0">
-        Aucune mesure ajoutée pour le moment.
+      <div class="field" *ngIf="isTension()">
+        <label class="field-label">Diastolique</label>
+        <input class="field-input" 
+               type="number" 
+               step="0.1"
+               [(ngModel)]="nouvelleMesure.valeur2"
+               placeholder="mmHg"/>
       </div>
 
-      <div class="card-actions">
-        <button class="btn-secondary" (click)="etape = 3">
-          Passer l'étape
-        </button>
-        <button class="btn-submit" (click)="etape = 3" [disabled]="mesures.length === 0">
-          Continuer → Ordonnance
-        </button>
+      <div class="field field-small">
+        <label class="field-label">Unité</label>
+        <input class="field-input" 
+               type="text" 
+               [(ngModel)]="nouvelleMesure.unite"
+               readonly/>
       </div>
+
+      <button class="btn-ajouter" 
+              (click)="ajouterMesure()" 
+              [disabled]="saving">
+        {{ saving ? '...' : '+ Ajouter' }}
+      </button>
     </div>
+  </div>
 
+  <!-- Liste mesures ajoutées -->
+  <div class="mesures-list" *ngIf="mesures.length > 0">
+    <div class="section-title">
+      Mesures enregistrées ({{ mesures.length }})
+    </div>
+    <div class="mesure-item" *ngFor="let m of mesures; let i = index">
+      <div class="mesure-icon">
+        <i class="ti" [ngClass]="{
+          'ti-droplet': m.type === 'GLYCEMIE',
+          'ti-heart': m.type === 'TENSION_ARTERIELLE',
+          'ti-temperature': m.type === 'TEMPERATURE',
+          'ti-scale': m.type === 'POIDS',
+          'ti-activity': m.type === 'FREQUENCE_CARDIAQUE'
+        }"></i>
+      </div>
+      <div class="mesure-info">
+        <div class="mesure-type">{{ getMesureLabel(m.type) }}</div>
+        <div class="mesure-valeur">
+          {{ m.valeur }}
+          <span *ngIf="m.valeur2">/ {{ m.valeur2 }}</span>
+          <span class="unite">{{ m.unite }}</span>
+        </div>
+      </div>
+      <span class="badge" [ngClass]="getNiveauClass(m.niveauAlerte)">
+        {{ m.niveauAlerte ?? 'NORMAL' }}
+      </span>
+      <button class="btn-suppr" (click)="supprimerMesure(i)">✕</button>
+    </div>
+  </div>
+
+  <!-- Message si aucune mesure -->
+  <div class="state-msg-small" *ngIf="mesures.length === 0">
+    Aucune mesure ajoutée pour le moment.
+  </div>
+
+  <!-- Actions -->
+  <div class="card-actions">
+    <button class="btn-secondary" (click)="etape = 3">
+      Passer l'étape
+    </button>
+    <button class="btn-submit" 
+            (click)="etape = 3" 
+            [disabled]="mesures.length === 0">
+      Continuer → Ordonnance
+    </button>
+  </div>
+</div>
     <!-- ═══ ETAPE 3 : ORDONNANCE ═══ -->
     <div class="card" *ngIf="etape === 3">
       <div class="card-title">Ordonnance</div>

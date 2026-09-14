@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface OrdonnanceRepository extends JpaRepository<Ordonnance, Long> {
-    
     Optional<Ordonnance> findByConsultationId(Long consultationId);
 }

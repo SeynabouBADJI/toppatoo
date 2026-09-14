@@ -1,81 +1,53 @@
 <div class="page">
+  <div class="header">
+    <h1>🚨 Alertes</h1>
+    <p class="subtitle">Patients avec mesures anormales</p>
+  </div>
 
-  <div class="topbar">
-    <div>
-      <div class="page-title">Alertes</div>
-      <div class="page-sub">{{ alertes.length }} alerte(s) active(s)</div>
+  <div class="stats" *ngIf="!loading">
+    <div class="stat-card stat-danger">
+      <div class="stat-value">{{ getNbCritiques() }}</div>
+      <div class="stat-label">Critiques</div>
+    </div>
+    <div class="stat-card stat-warn">
+      <div class="stat-value">{{ getNbAttentions() }}</div>
+      <div class="stat-label">À surveiller</div>
     </div>
   </div>
 
-  <div class="state-msg" *ngIf="loading">Analyse des mesures en cours...</div>
-  <div class="state-msg error" *ngIf="erreur">{{ erreur }}</div>
+  <div class="loading" *ngIf="loading">Chargement des alertes...</div>
 
-  <div *ngIf="!loading && !erreur">
+  <div class="erreur" *ngIf="erreur">{{ erreur }}</div>
 
-    <!-- Pas d'alertes -->
-    <div class="no-alerte" *ngIf="alertes.length === 0">
-      <div class="no-alerte-icon">✅</div>
-      <div class="no-alerte-titre">Tout va bien</div>
-      <div class="no-alerte-sub">Aucune mesure critique ou à surveiller parmi vos patients.</div>
-    </div>
-
-    <!-- CRITIQUES -->
-    <div *ngIf="alertesCritiques().length > 0">
-      <div class="section-title section-title--danger">
-        <i class="ti ti-alert-triangle"></i>
-        Critiques ({{ alertesCritiques().length }})
+  <div class="alertes-list" *ngIf="!loading && alertes.length > 0">
+    <div class="alerte-card" *ngFor="let alerte of alertes">
+      <div class="alerte-header">
+        <div class="patient-info">
+          <div class="patient-nom">
+            {{ alerte.patient.user.prenom }} {{ alerte.patient.user.nom }}
+          </div>
+          <div class="patient-maladie">{{ alerte.patient.maladieChronique }}</div>
+        </div>
+        <div class="alerte-count">
+          {{ alerte.mesures.length }} mesure(s)
+        </div>
       </div>
 
-      <div class="alerte-list">
-        <div class="alerte-card alerte-card--critique"
-             *ngFor="let a of alertesCritiques()"
-             (click)="ouvrirDossier(a.patient.id)">
-          <div class="alerte-gauche">
-            <div class="alerte-avatar">
-              {{ a.patient.user.prenom.charAt(0) }}{{ a.patient.user.nom.charAt(0) }}
-            </div>
+      <div class="mesures-alerte">
+        <div class="mesure-alerte" *ngFor="let m of alerte.mesures">
+          <div class="mesure-info">
+            <span class="mesure-type">{{ getMesureLabel(m.type) }}</span>
+            <span class="mesure-valeur">{{ formatValeur(m) }}</span>
           </div>
-          <div class="alerte-info">
-            <div class="alerte-patient">{{ a.patient.user.prenom }} {{ a.patient.user.nom }}</div>
-            <div class="alerte-mesure">{{ a.type }} — <strong>{{ a.valeur }}</strong></div>
-            <div class="alerte-date">{{ formatDate(a.date) }}</div>
-          </div>
-          <div class="alerte-droite">
-            <span class="badge badge-danger">🔴 Critique</span>
-            <span class="voir">Voir →</span>
-          </div>
+          <span class="badge" [ngClass]="getNiveauClass(m.niveauAlerte)">
+            {{ m.niveauAlerte }}
+          </span>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ATTENTION -->
-    <div *ngIf="alertesAttention().length > 0" style="margin-top: 24px;">
-      <div class="section-title section-title--warn">
-        <i class="ti ti-alert-circle"></i>
-        À surveiller ({{ alertesAttention().length }})
-      </div>
-
-      <div class="alerte-list">
-        <div class="alerte-card alerte-card--attention"
-             *ngFor="let a of alertesAttention()"
-             (click)="ouvrirDossier(a.patient.id)">
-          <div class="alerte-gauche">
-            <div class="alerte-avatar alerte-avatar--warn">
-              {{ a.patient.user.prenom.charAt(0) }}{{ a.patient.user.nom.charAt(0) }}
-            </div>
-          </div>
-          <div class="alerte-info">
-            <div class="alerte-patient">{{ a.patient.user.prenom }} {{ a.patient.user.nom }}</div>
-            <div class="alerte-mesure">{{ a.type }} — <strong>{{ a.valeur }}</strong></div>
-            <div class="alerte-date">{{ formatDate(a.date) }}</div>
-          </div>
-          <div class="alerte-droite">
-            <span class="badge badge-warn">🟠 Attention</span>
-            <span class="voir">Voir →</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <div class="empty-state" *ngIf="!loading && alertes.length === 0">
+    ✅ Aucune alerte pour le moment
   </div>
 </div>

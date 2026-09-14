@@ -9,39 +9,69 @@ import { PatientService } from '../../../core/services/patient.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './patient-liste.component.html',
-  styleUrls: ['./patient-liste.component.scss'],
+  styleUrls: ['./patient-liste.component.scss']
 })
 export class PatientListeComponent implements OnInit {
 
+  // ─── Données ───────────────────────────────────────────────────
   patients: Patient[] = [];
   loading = true;
   erreur = '';
+
+  // ✅ Exposer MALADIE_LABELS au template
   maladieLabels = MALADIE_LABELS;
-  medecinId = sessionStorage.getItem('userId') ?? '';
 
-  constructor(private patientService: PatientService, private router: Router) {}
+  // ─── Constructeur ──────────────────────────────────────────────
+  constructor(
+    private patientService: PatientService,
+    private router: Router
+  ) {}
 
+  // ─── Init ──────────────────────────────────────────────────────
   ngOnInit(): void {
     this.chargerPatients();
   }
 
   chargerPatients(): void {
     this.loading = true;
-    this.patientService.getPatientsByMedecin(this.medecinId).subscribe({
-      next: (data) => { this.patients = data; this.loading = false; },
-      error: () => { this.erreur = 'Impossible de charger les patients.'; this.loading = false; },
+    this.erreur = '';
+
+    this.patientService.getAllPatients().subscribe({
+      next: (data: Patient[]) => {
+        this.patients = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('❌ Erreur chargement patients:', err);
+        this.erreur = 'Erreur lors du chargement des patients.';
+        this.loading = false;
+      }
     });
   }
 
-  ouvrirDossier(patientId: string): void {
-    this.router.navigate(['/medecin/patients', patientId, 'detail']);
+  // ─── Méthodes utilisées dans le template ──────────────────────
+
+  // ✅ Ouvrir le dossier d'un patient
+  ouvrirDossier(id: number): void {
+    this.router.navigate(['/medecin/patients', id, 'detail']);
   }
 
+  // ✅ Nouveau patient
   nouveauPatient(): void {
-    this.router.navigate(['/medecin/patients/nouveau']);
+    this.router.navigate(['/medecin/nouveau-patient']);
   }
 
+  // ✅ Initiales pour l'avatar
+  initiales(patient: Patient): string {
+    if (!patient?.user) return '';
+    const prenom = patient.user.prenom?.charAt(0) ?? '';
+    const nom = patient.user.nom?.charAt(0) ?? '';
+    return (prenom + nom).toUpperCase();
+  }
+
+  // ✅ Calculer l'âge
   calculerAge(dateNaissance: string): number {
+    if (!dateNaissance) return 0;
     const n = new Date(dateNaissance);
     const a = new Date();
     let age = a.getFullYear() - n.getFullYear();
@@ -49,11 +79,4 @@ export class PatientListeComponent implements OnInit {
     if (m < 0 || (m === 0 && a.getDate() < n.getDate())) age--;
     return age;
   }
-
-  initiales(patient: Patient): string {
-  if (!patient?.user) return '?';
-  const p = patient.user.prenom?.charAt(0) ?? '';
-  const n = patient.user.nom?.charAt(0) ?? '';
-  return (p + n).toUpperCase() || '?';
-}
 }

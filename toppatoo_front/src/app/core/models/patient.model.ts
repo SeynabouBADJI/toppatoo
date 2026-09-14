@@ -1,7 +1,7 @@
 export interface Patient {
-  id: string;
+  id: number;
   user: {
-    id: string;
+    id: number;
     nom: string;
     prenom: string;
     email: string;
@@ -9,7 +9,7 @@ export interface Patient {
     role: string;
     actif: boolean;
   };
-  medecinId?: string;
+  medecinId?: number;
   medecinNom?: string;
   dateNaissance: string;
   sexe: string;
@@ -27,6 +27,7 @@ export interface Patient {
   seuilPoidsMax?: number;
 }
 
+// ✅ AJOUTER CE BLOC
 export type MaladieChronique =
   | 'DIABETE_TYPE1'
   | 'DIABETE_TYPE2'

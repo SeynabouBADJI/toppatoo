@@ -21,16 +21,21 @@
       <div class="patient-header">
         <div class="avatar">{{ initiales(patient) }}</div>
         <div>
-          <div class="patient-name">{{ patient.user?.prenom }} {{ patient.user?.nom }}</div>
-
-          <div class="patient-meta">{{ calculerAge(patient.dateNaissance) }} ans · {{ patient.sexe }}</div>
+          <div class="patient-name">
+            {{ patient.user?.prenom }} {{ patient.user?.nom }}
+          </div>
+          <div class="patient-meta">
+            {{ calculerAge(patient.dateNaissance) }} ans · {{ patient.sexe }}
+          </div>
         </div>
       </div>
 
       <div class="patient-body">
         <span class="badge">{{ maladieLabels[patient.maladieChronique] }}</span>
-        <div class="patient-contact" *ngIf="patient.user.telephone">
-          📞 {{ patient.user.telephone }}
+        
+        <!-- ✅ CORRECTION : Utiliser ?. pour éviter l'erreur -->
+        <div class="patient-contact" *ngIf="patient.user?.telephone">
+          📞 {{ patient.user?.telephone }}
         </div>
       </div>
 
